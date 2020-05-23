@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
     <head>
-        <title>LeetCode Customiser Extension</title>
+        <title>LeetCode Buddy</title>
         <style type="text/css">
             body {
                 margin: 10px;
@@ -16,7 +16,7 @@
             }
 
             #container > div {
-                float: right;
+                float: left;
                 margin-bottom: 1em;
             }
         </style>
@@ -26,6 +26,9 @@
     <body>
         <h1>Configuration</h1>
         <div id="container">
+            <div>
+                <span id="serverCompletionStatusLabel">Show Completion Status from Server</span>: <input id="serverCompletionStatus" type="checkbox" />
+            </div>
             <div>
                 Show Announcement: <input id="announcement" type="checkbox" />
             </div>

@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     var container = document.getElementById('container'),
+        serverCompletionStatus = document.getElementById('serverCompletionStatus'),
         announcement = document.getElementById('announcement'),
         acceptanceRate = document.getElementById('acceptanceRate'),
         difficulty = document.getElementById('difficulty'),
@@ -10,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (opts === undefined) {
             opts = {
+                serverCompletionStatus: false,
                 announcement: false,
                 acceptanceRate: false,
                 difficulty: false,
@@ -21,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
             chrome.storage.sync.set({lc_options: opts});
         }
 
+        serverCompletionStatus.checked = opts.serverCompletionStatus;
         announcement.checked = opts.announcement;
         acceptanceRate.checked = opts.acceptanceRate;
         difficulty.checked = opts.difficulty;
@@ -31,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     container.addEventListener('change', () => {
         var options = {
+            serverCompletionStatus: serverCompletionStatus.checked,
             announcement: announcement.checked,
             acceptanceRate: acceptanceRate.checked,
             difficulty: difficulty.checked,

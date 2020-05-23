@@ -1,4 +1,5 @@
 var options = {
+        serverCompletionStatus: false,
         announcement: false,
         acceptanceRate: false,
         difficulty: false,
@@ -8,6 +9,11 @@ var options = {
         solvedDifficultyCounts: false
     },
     updateOptions = function (newOptions) {
+        if (options.serverCompletionStatus !== newOptions.serverCompletionStatus) {
+            toggleServerCompletionStatus(newOptions.serverCompletionStatus);
+            options.serverCompletionStatus = newOptions.serverCompletionStatus;
+        }
+
         if (options.announcement !== newOptions.announcement) {
             toggleAnnouncement(newOptions.announcement);
             options.announcement = newOptions.announcement;
@@ -36,6 +42,34 @@ var options = {
         if (options.solvedDifficultyCounts !== newOptions.solvedDifficultyCounts) {
             toggleSolvedDifficultyCounts(newOptions.solvedDifficultyCounts);
             options.solvedDifficultyCounts = newOptions.solvedDifficultyCounts;
+        }
+    },
+    toggleServerCompletionStatus = function (show) {
+        var problemsListViewCompletionChecks = document.querySelectorAll('.reactable-data > tr > td:nth-child(1)'),
+            listViewCompletionChecks = document.getElementsByClassName('css-alevek');
+        
+        if (show) {
+            if (problemsListViewCompletionChecks !== null) {
+                for (var i = 0; i < problemsListViewCompletionChecks.length; ++i) {
+                    problemsListViewCompletionChecks[i].style = '';
+                }
+            }
+            if (listViewCompletionChecks !== null) {
+                for(let i = 0; i < listViewCompletionChecks.length; i++) {
+                    listViewCompletionChecks[i].style = '';
+                  }
+            }
+        } else {
+            if (problemsListViewCompletionChecks !== null) {
+                for (var i = 0; i < problemsListViewCompletionChecks.length; ++i) {
+                    problemsListViewCompletionChecks[i].style = 'opacity: 0;';
+                }
+            }
+            if (listViewCompletionChecks !== null) {
+                for(let i = 0; i < listViewCompletionChecks.length; i++) {
+                    listViewCompletionChecks[i].style = 'opacity: 0;';
+                  }
+            }
         }
     },
     toggleAnnouncement = function (show) {
@@ -155,7 +189,8 @@ var options = {
             }
         }
     },
-    qaEvent = function () {
+    appEvent = function () {
+        toggleServerCompletionStatus(options.serverCompletionStatus);
         toggleAnnouncement(options.announcement);
         toggleAcceptanceRate(options.acceptanceRate);
         toggleDifficulty(options.difficulty);
@@ -167,7 +202,8 @@ var options = {
 document.addEventListener('DOMContentLoaded', function (e) {
     var qa = document.getElementById('question-app'),
         app = document.getElementById('app'),
-        mo = new MutationObserver(qaEvent);
+        fa = document.getElementById('favorite-app'),
+        mo = new MutationObserver(appEvent);
 
     if (qa !== null) {
         mo.observe(qa, {childList: true, subtree: true});
@@ -178,6 +214,10 @@ document.addEventListener('DOMContentLoaded', function (e) {
 
     if (app !== null) {
       mo.observe(app, {childList: true, subtree: true});
+    }
+
+    if (fa !== null) {
+        mo.observe(fa, {childList: true, subtree: true});
     }
 
     chrome.storage.sync.get('lc_options', (opts) => {
