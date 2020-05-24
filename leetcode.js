@@ -44,6 +44,22 @@ var options = {
             options.solvedDifficultyCounts = newOptions.solvedDifficultyCounts;
         }
     },
+    getElementsByClassNamePrefix = function(oElm, strTagName, strClassName) {
+        var arrElements = (strTagName == "*" && oElm.all)? oElm.all : 
+        oElm.getElementsByTagName(strTagName);
+        var arrReturnElements = new Array();
+        strClassName = strClassName.replace(/\-/g, "\\-");
+        var oRegExp = new RegExp(strClassName);
+        console.log(strClassName, oRegExp);
+        var oElement;
+        for(var i=0; i<arrElements.length; i++){
+            oElement = arrElements[i];      
+            if(oRegExp.test(oElement.className)){
+                arrReturnElements.push(oElement);
+            }   
+        }
+        return (arrReturnElements)
+    },
     toggleServerCompletionStatus = function (show) {
         var problemsListViewCompletionChecks = document.querySelectorAll('.reactable-data > tr > td:nth-child(1)'),
             listViewCompletionChecks = document.getElementsByClassName('css-alevek');
