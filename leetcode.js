@@ -91,7 +91,13 @@ var options = {
     getProblemTitle = function() {
         var problemTitleDivArr = document.getElementsByClassName("css-v3d350");
         var problemTitleDiv = problemTitleDivArr[0];
-        return problemTitleDiv.textContent;
+        var problemNamePartsArr = problemTitleDiv.textContent.split(". ");
+        var problemNumber = parseInt(problemNamePartsArr[0]); 
+        var problemName = problemNamePartsArr[1];
+        return {
+            "problemName": problemName,
+            "problemNumber": problemNumber
+        };
     },
     checkForSubmission = function() {
         var resultContainerMatches = getElementsByClassNamePrefix(document, "div", "result-container");
@@ -104,21 +110,26 @@ var options = {
             var currentSubmissionState = null;
             if (successElementArr !== null && successElementArr.length > 0) {
                 // correct submission
-                console.log("CORRECT SUBMISSION");
                 currentSubmissionState = "correct";
             } else if (failureElementArr !== null && failureElementArr.length > 0) {
                 // incorrect submission
-                console.log("INCORRECT SUBMISSION");
-                currentSubmissionState = "incorarect";
+                currentSubmissionState = "incorrect";
             }
-            var title = getProblemTitle();
-            if (!(title in p_store) || (p_store[title]["submissionState"] != currentSubmissionState)) {
-                saveProblemData(title, "submissionState", currentSubmissionState); 
-            }
+            saveProblemData("submissionState", currentSubmissionState); 
         }
     },
-    saveProblemData = function(problemTitle, dataKey, dataVal) {
+    saveProblemData = function(dataKey, dataVal) {
         console.log("saving problem data", dataKey, dataVal);
+    
+        var problemTitle = getProblemTitle();
+        var problemNumber = problemTitle["problemNumber"];
+        var problemName = problemTitle["problemName"];
+
+        if ((problemNumber in p_store) && (p_store[problemNumber][dataKey] == dataVal)) {
+            // given data already exists in store and value hasn't changed. 
+            return;
+        }
+
         chrome.storage.sync.get('lc_buddy_p_store', (store) => {
             console.log("found store", store);
             var cur_p_store = store['lc_buddy_p_store'];
@@ -126,13 +137,14 @@ var options = {
             if (cur_p_store === undefined) {
                 cur_p_store = {};
             }
-            if (!(problemTitle in cur_p_store)) {
+            if (!(problemNumber in cur_p_store)) {
                 // question has never been submitted before
-                cur_p_store[problemTitle] = {};
-                cur_p_store[problemTitle][dataKey] = dataVal;
+                cur_p_store[problemNumber] = {};
+                cur_p_store[problemNumber][dataKey] = dataVal;
+                cur_p_store[problemNumber]["problemName"] = problemName;
             } else {
                 // question has been submitted before
-                cur_p_store[problemTitle][dataKey] = dataVal;
+                cur_p_store[problemNumber][dataKey] = dataVal;
             }
             p_store = cur_p_store;
             console.log("saving", cur_p_store)
