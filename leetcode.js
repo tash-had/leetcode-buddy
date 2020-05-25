@@ -60,58 +60,82 @@ var options = {
         }
         return (arrReturnElements)
     },
+    isAppScreen = function () {
+        var appDiv = document.getElementById("app");
+        if (appDiv !== null) {
+            return true;
+        }
+        return false;
+    },
+    isQuestionAppScreen = function () {
+        var questionApp = document.getElementById("question-app");
+        if (questionApp !== null) {
+            return true;
+        }
+        return false;
+    },
+    isFavoriteAppScreen = function () {
+        var favoriteApp = document.getElementById("favorite-app");
+        if (favoriteApp !== null) {
+            return true;
+        }
+        return false;
+    },
     toggleServerCompletionStatus = function (show) {
-        var problemsListViewCompletionChecks = document.querySelectorAll('.reactable-data > tr > td:nth-child(1)'),
-            listViewCompletionChecks = document.getElementsByClassName('css-alevek');
         
+        var problemNamesList = null;
+        var completionChecks = null;
+
+        if (isQuestionAppScreen()) {
+            // 'problems' view 
+            completionChecks = document.querySelectorAll('.reactable-data > tr > td:nth-child(1)');
+            problemNamesList = document.querySelectorAll('.reactable-data > tr > td:nth-child(3)');
+        } else if (isFavoriteAppScreen()) {
+            // 'my lists' view
+            completionChecks = document.getElementsByClassName('css-alevek');
+            problemNamesList = document.getElementsByClassName("question-title");
+        } else {
+            return;
+        }
+
         if (show) {
-            if (problemsListViewCompletionChecks !== null) {
-                for (var i = 0; i < problemsListViewCompletionChecks.length; ++i) {
-                    problemsListViewCompletionChecks[i].style = '';
+            if (completionChecks !== null) {
+                for (var i = 0; i < completionChecks.length; i++) {
+                    completionChecks[i].style = '';
                 }
-            }
-            if (listViewCompletionChecks !== null) {
-                for(let i = 0; i < listViewCompletionChecks.length; i++) {
-                    listViewCompletionChecks[i].style = '';
-                  }
             }
         } else {
-            if (problemsListViewCompletionChecks !== null) {
-                // 'problems' view 
-                var problemNameList = document.querySelectorAll('.reactable-data > tr > td:nth-child(3)');
-                for (var i = 0; i < problemsListViewCompletionChecks.length; ++i) {
-                    var problemName = problemNameList[i].textContent.trim()
-                    if (!(problemName in p_store) || !(p_store[problemName]["correctSubmission"])) {
-                        problemsListViewCompletionChecks[i].style = 'opacity: 0;';
+            if (completionChecks !== null) {
+                for (var i = 0; i < completionChecks.length; i++) {
+                    var problemNameParts = problemNamesList[i].textContent.split(".");
+                    var bareProblemName = problemNameParts[problemNameParts.length - 1].trim();
+                    if (!(bareProblemName in p_store) || !(p_store[bareProblemName]["correctSubmission"])) {
+                        completionChecks[i].style = 'opacity: 0;';
+                    } else {
+                        completionChecks[i].style = '';
                     }
                 }
-            }
-            if (listViewCompletionChecks !== null) {
-                // 'my lists' view
-                var problemNameList = document.getElementsByClassName("question-title");
-                for(let i = 0; i < listViewCompletionChecks.length; i++) {
-                    var fullTitle = problemNameList[i].textContent.split(".");
-                    var problemName = fullTitle[1].trim();
-
-                    if (!(problemName in p_store) || !(p_store[problemName]["correctSubmission"])) {
-                        listViewCompletionChecks[i].style = 'opacity: 0;';
-                    }
-                  }
             }
         }
     },
     getProblemTitle = function() {
-        var problemTitleDivArr = document.getElementsByClassName("css-v3d350");
-        var problemTitleDiv = problemTitleDivArr[0];
-        var problemNamePartsArr = problemTitleDiv.textContent.split(". ");
-        var problemNumber = parseInt(problemNamePartsArr[0].trim()); 
-        var problemName = problemNamePartsArr[1].trim();
-        return {
-            "problemName": problemName,
-            "problemNumber": problemNumber
-        };
+        if (isAppScreen()) {
+            var problemTitleDivArr = document.getElementsByClassName("css-v3d350");
+            var problemTitleDiv = problemTitleDivArr[0];
+            var problemNamePartsArr = problemTitleDiv.textContent.split(". ");
+            var problemNumber = parseInt(problemNamePartsArr[0].trim()); 
+            var problemName = problemNamePartsArr[1].trim();
+            return {
+                "problemName": problemName,
+                "problemNumber": problemNumber
+            };
+        }
+        return null;
     },
     checkForSubmission = function() {
+        if (!isAppScreen()) {
+            return;
+        }
         var resultContainerMatches = getElementsByClassNamePrefix(document, "div", "result-container");
         if (resultContainerMatches != null && resultContainerMatches.length > 0) {
             var resultContainer = resultContainerMatches[0];
@@ -305,7 +329,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
     }
 
     if (app !== null) {
-      mo.observe(app, {childList: true, subtree: true});
+        mo.observe(app, {childList: true, subtree: true});
     }
 
     if (fa !== null) {
