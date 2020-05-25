@@ -77,11 +77,18 @@ var options = {
             }
         } else {
             if (problemsListViewCompletionChecks !== null) {
+                // 'problems' view 
+                var problemNameList = document.querySelectorAll('.reactable-data > tr > td:nth-child(3)');
+                
                 for (var i = 0; i < problemsListViewCompletionChecks.length; ++i) {
-                    problemsListViewCompletionChecks[i].style = 'opacity: 0;';
+                    var problemName = problemNameList[i].textContent.trim()
+                    if (!(problemName in p_store) || !(p_store[problemName]["correctSubmission"])) {
+                        problemsListViewCompletionChecks[i].style = 'opacity: 0;';
+                    }
                 }
             }
             if (listViewCompletionChecks !== null) {
+                // 'my lists' view
                 for(let i = 0; i < listViewCompletionChecks.length; i++) {
                     listViewCompletionChecks[i].style = 'opacity: 0;';
                   }
@@ -92,8 +99,8 @@ var options = {
         var problemTitleDivArr = document.getElementsByClassName("css-v3d350");
         var problemTitleDiv = problemTitleDivArr[0];
         var problemNamePartsArr = problemTitleDiv.textContent.split(". ");
-        var problemNumber = parseInt(problemNamePartsArr[0]); 
-        var problemName = problemNamePartsArr[1];
+        var problemNumber = parseInt(problemNamePartsArr[0].trim()); 
+        var problemName = problemNamePartsArr[1].trim();
         return {
             "problemName": problemName,
             "problemNumber": problemNumber
@@ -107,15 +114,15 @@ var options = {
             var result = resultArr[0];
             var successElementArr = getElementsByClassNamePrefix(result, "div", "success");
             var failureElementArr = getElementsByClassNamePrefix(result, "div", "error");
-            var currentSubmissionState = null;
+            var correctSubmission = null;
             if (successElementArr !== null && successElementArr.length > 0) {
                 // correct submission
-                currentSubmissionState = "correct";
+                correctSubmission = true;
             } else if (failureElementArr !== null && failureElementArr.length > 0) {
                 // incorrect submission
-                currentSubmissionState = "incorrect";
+                correctSubmission = false;
             }
-            saveProblemData("submissionState", currentSubmissionState); 
+            saveProblemData("correctSubmission", correctSubmission); 
         }
     },
     saveProblemData = function(dataKey, dataVal) {
@@ -125,7 +132,7 @@ var options = {
         var problemNumber = problemTitle["problemNumber"];
         var problemName = problemTitle["problemName"];
 
-        if ((problemNumber in p_store) && (p_store[problemNumber][dataKey] == dataVal)) {
+        if ((problemName in p_store) && (p_store[problemName][dataKey] == dataVal)) {
             // given data already exists in store and value hasn't changed. 
             return;
         }
@@ -137,14 +144,14 @@ var options = {
             if (cur_p_store === undefined) {
                 cur_p_store = {};
             }
-            if (!(problemNumber in cur_p_store)) {
+            if (!(problemName in cur_p_store)) {
                 // question has never been submitted before
-                cur_p_store[problemNumber] = {};
-                cur_p_store[problemNumber][dataKey] = dataVal;
-                cur_p_store[problemNumber]["problemName"] = problemName;
+                cur_p_store[problemName] = {};
+                cur_p_store[problemName][dataKey] = dataVal;
+                cur_p_store[problemName]["problemNumber"] = problemNumber;
             } else {
                 // question has been submitted before
-                cur_p_store[problemNumber][dataKey] = dataVal;
+                cur_p_store[problemName][dataKey] = dataVal;
             }
             p_store = cur_p_store;
             console.log("saving", cur_p_store)
