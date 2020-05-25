@@ -81,19 +81,34 @@ var options = {
         }
         return false;
     },
+    isExploreAppScreen = function () {
+        var exploreApp = document.getElementById("explore-app");
+        if (exploreApp !== null) {
+            return true;
+        }
+        return false;
+    },
     toggleServerCompletionStatus = function (show) {
         var problemNamesList = null;
         var completionChecks = null;
 
         if (isQuestionAppScreen()) {
+            console.log("is question screen");
             // 'problems' view 
             completionChecks = document.querySelectorAll('.reactable-data > tr > td:nth-child(1)');
             problemNamesList = document.querySelectorAll('.reactable-data > tr > td:nth-child(3)');
         } else if (isFavoriteAppScreen()) {
+            console.log("is fav screen");
+
             // 'my lists' view
             completionChecks = document.getElementsByClassName('css-alevek');
             problemNamesList = document.getElementsByClassName("question-title");
+        } else if (isExploreAppScreen()) {
+            console.log("is explore screen");
+            completionChecks = document.getElementsByClassName("status");
+            problemNamesList = document.getElementsByClassName("item-detail");
         } else {
+            console.log("is other screen");
             return;
         }
 
@@ -314,6 +329,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
     var qa = document.getElementById('question-app'),
         app = document.getElementById('app'),
         fa = document.getElementById('favorite-app'),
+        ea = document.getElementById('explore-app'),
         mo = new MutationObserver(appEvent);
 
     if (qa !== null) {
@@ -329,6 +345,10 @@ document.addEventListener('DOMContentLoaded', function (e) {
 
     if (fa !== null) {
         mo.observe(fa, {childList: true, subtree: true});
+    }
+
+    if (ea !== null) {
+        mo.observe(ea, {childList: true, subtree: true});
     }
 
     chrome.storage.sync.get('lc_buddy_config', (opts) => {
