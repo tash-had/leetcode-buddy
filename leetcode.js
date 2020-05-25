@@ -79,7 +79,6 @@ var options = {
             if (problemsListViewCompletionChecks !== null) {
                 // 'problems' view 
                 var problemNameList = document.querySelectorAll('.reactable-data > tr > td:nth-child(3)');
-                
                 for (var i = 0; i < problemsListViewCompletionChecks.length; ++i) {
                     var problemName = problemNameList[i].textContent.trim()
                     if (!(problemName in p_store) || !(p_store[problemName]["correctSubmission"])) {
@@ -89,8 +88,14 @@ var options = {
             }
             if (listViewCompletionChecks !== null) {
                 // 'my lists' view
+                var problemNameList = document.getElementsByClassName("question-title");
                 for(let i = 0; i < listViewCompletionChecks.length; i++) {
-                    listViewCompletionChecks[i].style = 'opacity: 0;';
+                    var fullTitle = problemNameList[i].textContent.split(".");
+                    var problemName = fullTitle[1].trim();
+
+                    if (!(problemName in p_store) || !(p_store[problemName]["correctSubmission"])) {
+                        listViewCompletionChecks[i].style = 'opacity: 0;';
+                    }
                   }
             }
         }
