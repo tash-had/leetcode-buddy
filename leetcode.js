@@ -8,6 +8,7 @@ var options = {
         resultCount: 0,
         solvedDifficultyCounts: false
     },
+    p_store = {},
     updateOptions = function (newOptions) {
         if (options.serverCompletionStatus !== newOptions.serverCompletionStatus) {
             toggleServerCompletionStatus(newOptions.serverCompletionStatus);
@@ -50,7 +51,6 @@ var options = {
         var arrReturnElements = new Array();
         strClassName = strClassName.replace(/\-/g, "\\-");
         var oRegExp = new RegExp(strClassName);
-        console.log(strClassName, oRegExp);
         var oElement;
         for(var i=0; i<arrElements.length; i++){
             oElement = arrElements[i];      
@@ -87,6 +87,57 @@ var options = {
                   }
             }
         }
+    },
+    getProblemTitle = function() {
+        var problemTitleDivArr = document.getElementsByClassName("css-v3d350");
+        var problemTitleDiv = problemTitleDivArr[0];
+        return problemTitleDiv.textContent;
+    },
+    checkForSubmission = function() {
+        var resultContainerMatches = getElementsByClassNamePrefix(document, "div", "result-container");
+        if (resultContainerMatches != null && resultContainerMatches.length > 0) {
+            var resultContainer = resultContainerMatches[0];
+            var resultArr = getElementsByClassNamePrefix(resultContainer, "div", "result");
+            var result = resultArr[0];
+            var successElementArr = getElementsByClassNamePrefix(result, "div", "success");
+            var failureElementArr = getElementsByClassNamePrefix(result, "div", "error");
+            var currentSubmissionState = null;
+            if (successElementArr !== null && successElementArr.length > 0) {
+                // correct submission
+                console.log("CORRECT SUBMISSION");
+                currentSubmissionState = "correct";
+            } else if (failureElementArr !== null && failureElementArr.length > 0) {
+                // incorrect submission
+                console.log("INCORRECT SUBMISSION");
+                currentSubmissionState = "incorarect";
+            }
+            var title = getProblemTitle();
+            if (!(title in p_store) || (p_store[title]["submissionState"] != currentSubmissionState)) {
+                saveProblemData(title, "submissionState", currentSubmissionState); 
+            }
+        }
+    },
+    saveProblemData = function(problemTitle, dataKey, dataVal) {
+        console.log("saving problem data", dataKey, dataVal);
+        chrome.storage.sync.get('lc_buddy_p_store', (store) => {
+            console.log("found store", store);
+            var cur_p_store = store['lc_buddy_p_store'];
+            
+            if (cur_p_store === undefined) {
+                cur_p_store = {};
+            }
+            if (!(problemTitle in cur_p_store)) {
+                // question has never been submitted before
+                cur_p_store[problemTitle] = {};
+                cur_p_store[problemTitle][dataKey] = dataVal;
+            } else {
+                // question has been submitted before
+                cur_p_store[problemTitle][dataKey] = dataVal;
+            }
+            p_store = cur_p_store;
+            console.log("saving", cur_p_store)
+            chrome.storage.sync.set({lc_buddy_p_store: cur_p_store});
+        });
     },
     toggleAnnouncement = function (show) {
         var announcement = document.getElementById('announcement');
@@ -213,6 +264,7 @@ var options = {
         toggleLockedQuestions(options.lockedQuestions);
         toggleResultCountNode(options.resultCountNode);
         toggleSolvedDifficultyCounts(options.solvedDifficultyCounts);
+        checkForSubmission();
     };
 
 document.addEventListener('DOMContentLoaded', function (e) {
@@ -236,11 +288,19 @@ document.addEventListener('DOMContentLoaded', function (e) {
         mo.observe(fa, {childList: true, subtree: true});
     }
 
-    chrome.storage.sync.get('lc_options', (opts) => {
-        if (opts['lc_options'] === undefined) {
-            chrome.storage.sync.set({lc_options: opts});
+    chrome.storage.sync.get('lc_buddy_config', (opts) => {
+        if (opts['lc_buddy_config'] === undefined) {
+            chrome.storage.sync.set({lc_buddy_config: opts});
         } else {
-            updateOptions(opts['lc_options']);
+            updateOptions(opts['lc_buddy_config']);
+        }
+    });
+    
+    chrome.storage.sync.get('lc_buddy_p_store', (store) => {
+        if (store['lc_buddy_p_store'] === undefined) {
+            chrome.storage.sync.set({lc_buddy_p_store: {}});
+        } else {
+            p_store = store['lc_buddy_p_store'];
         }
     });
 });

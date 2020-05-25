@@ -6,8 +6,8 @@ document.addEventListener('DOMContentLoaded', () => {
         difficulty = document.getElementById('difficulty'),
         lockedQuestions = document.getElementById('lockedQuestions');
 
-    chrome.storage.sync.get('lc_options', (options) => {
-        var opts = options['lc_options'];
+    chrome.storage.sync.get('lc_buddy_config', (options) => {
+        var opts = options['lc_buddy_config'];
 
         if (opts === undefined) {
             opts = {
@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 resultCount: 0,
                 solvedDifficultyCounts: false
             };
-            chrome.storage.sync.set({lc_options: opts});
+            chrome.storage.sync.set({lc_buddy_config: opts});
         }
 
         serverCompletionStatus.checked = opts.serverCompletionStatus;
@@ -46,6 +46,6 @@ document.addEventListener('DOMContentLoaded', () => {
         chrome.tabs.getSelected(null, function(tab) {
             chrome.tabs.sendMessage(tab.id, options, null, null);
         });
-        chrome.storage.sync.set({lc_options: options});
+        chrome.storage.sync.set({lc_buddy_config: options});
     });
 });
