@@ -82,7 +82,6 @@ var options = {
         return false;
     },
     toggleServerCompletionStatus = function (show) {
-        
         var problemNamesList = null;
         var completionChecks = null;
 
@@ -155,8 +154,6 @@ var options = {
         }
     },
     saveProblemData = function(dataKey, dataVal) {
-        console.log("saving problem data", dataKey, dataVal);
-    
         var problemTitle = getProblemTitle();
         var problemNumber = problemTitle["problemNumber"];
         var problemName = problemTitle["problemName"];
@@ -167,7 +164,6 @@ var options = {
         }
 
         chrome.storage.sync.get('lc_buddy_p_store', (store) => {
-            console.log("found store", store);
             var cur_p_store = store['lc_buddy_p_store'];
             
             if (cur_p_store === undefined) {
@@ -183,7 +179,6 @@ var options = {
                 cur_p_store[problemName][dataKey] = dataVal;
             }
             p_store = cur_p_store;
-            console.log("saving", cur_p_store)
             chrome.storage.sync.set({lc_buddy_p_store: cur_p_store});
         });
     },
