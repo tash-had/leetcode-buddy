@@ -86,8 +86,14 @@ var options = {
     },
     isExploreAppScreen = function () {
         var exploreApp = document.getElementById("explore-app");
-        var chapterContent = document.getElementsByClassName("explore-detail-base");
-        if (exploreApp !== null && chapterContent.length > 0) {
+        if (exploreApp !== null) {
+            var chapterList = document.getElementsByClassName("chapter-list-base");
+            if (chapterList.length == 0) {
+                var expandableChapterList = document.getElementsByClassName("expandable-chapter-list-base");
+                if (expandableChapterList.length == 0) {
+                    return false;
+                }
+            }
             return true;
         }
         return false;
@@ -99,18 +105,14 @@ var options = {
         if (isAppScreen()) {
             return;
         } else if (isQuestionAppScreen()) {
-            console.log("is question screen");
             // 'problems' view 
             completionChecks = document.querySelectorAll('.reactable-data > tr > td:nth-child(1)');
             problemNamesList = document.querySelectorAll('.reactable-data > tr > td:nth-child(3)');
         } else if (isFavoriteAppScreen()) {
-            console.log("is fav screen");
-
             // 'my lists' view
             completionChecks = document.getElementsByClassName('css-alevek');
             problemNamesList = document.getElementsByClassName("question-title");
         } else if (isExploreAppScreen()) {
-            console.log("is explore screen");
             completionChecks = document.getElementsByClassName("check-mark");
             problemNamesList = [];
             for (var i = 0; i < completionChecks.length; i++) {
@@ -121,18 +123,18 @@ var options = {
                 problemNamesList.push(titleElement);
             }
         } else {
-            console.log("is other screen");
             return;
         }
 
         if (show) {
-            if (completionChecks !== null) {
+            if (completionChecks !== null && completionChecks.length > 0) {
                 for (var i = 0; i < completionChecks.length; i++) {
                     completionChecks[i].style = '';
                 }
+                console.log("toggleServerCompletionStatus: reset style");
             }
         } else {
-            if (completionChecks !== null) {
+            if (completionChecks !== null && completionChecks.length > 0) {
                 for (var i = 0; i < completionChecks.length; i++) {
                     var problemNameParts = problemNamesList[i].textContent.split(".");
                     var bareProblemName = problemNameParts[problemNameParts.length - 1].trim();
@@ -142,6 +144,7 @@ var options = {
                         completionChecks[i].style = '';
                     }
                 }
+                console.log("toggleServerCompletionStatus: set completion checks");
             }
         }
     },
@@ -160,12 +163,10 @@ var options = {
         return null;
     },
     checkForSubmission = function() {
-        console.log("checking for submission");
         var currentUrl = location.href;
         if (!isAppScreen() || (currentUrl.indexOf("/submissions/")) < 0) {
             return;
         } else {
-            console.log("looking for result container");
             var resultContainerMatches = getElementsByClassNamePrefix(document, "div", "result-container");
             if (resultContainerMatches != null && resultContainerMatches.length > 0) {
                 var resultContainer = resultContainerMatches[0];
@@ -182,7 +183,6 @@ var options = {
                         // incorrect submission
                         correctSubmission = false;
                     }
-                    console.log("saving", correctSubmission);
                     saveProblemData("correctSubmission", correctSubmission); 
                 }
             }
@@ -255,6 +255,9 @@ var options = {
         }
     },
     toggleDifficulty = function (show) {
+        if ((!isQuestionAppScreen() && !isAppScreen())) {
+            return;
+        }
         var difficulties = document.querySelectorAll('.reactable-data > tr > td:nth-child(6)'),
             difficulty = document.querySelector('[diff]');
 
