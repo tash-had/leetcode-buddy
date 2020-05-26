@@ -44,7 +44,6 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         chrome.tabs.getSelected(null, function(tab) {
-            console.log("here is the tab", tab.id);
             chrome.tabs.sendMessage(tab.id, options, null, null);
         });
         chrome.storage.sync.set({lc_buddy_config: options});

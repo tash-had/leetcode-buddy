@@ -46,6 +46,9 @@ var options = {
         }
     },
     getElementsByClassNamePrefix = function(oElm, strTagName, strClassName) {
+        if (oElm === undefined || oElm === null) {
+            return null;
+        }
         var arrElements = (strTagName == "*" && oElm.all)? oElm.all : 
         oElm.getElementsByTagName(strTagName);
         var arrReturnElements = new Array();
@@ -83,7 +86,8 @@ var options = {
     },
     isExploreAppScreen = function () {
         var exploreApp = document.getElementById("explore-app");
-        if (exploreApp !== null) {
+        var chapterContent = document.getElementsByClassName("explore-detail-base");
+        if (exploreApp !== null && chapterContent.length > 0) {
             return true;
         }
         return false;
@@ -92,7 +96,9 @@ var options = {
         var problemNamesList = null;
         var completionChecks = null;
 
-        if (isQuestionAppScreen()) {
+        if (isAppScreen()) {
+            return;
+        } else if (isQuestionAppScreen()) {
             console.log("is question screen");
             // 'problems' view 
             completionChecks = document.querySelectorAll('.reactable-data > tr > td:nth-child(1)');
@@ -105,8 +111,15 @@ var options = {
             problemNamesList = document.getElementsByClassName("question-title");
         } else if (isExploreAppScreen()) {
             console.log("is explore screen");
-            completionChecks = document.getElementsByClassName("status");
-            problemNamesList = document.getElementsByClassName("item-detail");
+            completionChecks = document.getElementsByClassName("check-mark");
+            problemNamesList = [];
+            for (var i = 0; i < completionChecks.length; i++) {
+                var titleElement = completionChecks[i].nextElementSibling;
+                if (titleElement == null) {
+                    titleElement = completionChecks[i].parentElement.nextElementSibling;
+                }
+                problemNamesList.push(titleElement);
+            }
         } else {
             console.log("is other screen");
             return;
@@ -147,25 +160,32 @@ var options = {
         return null;
     },
     checkForSubmission = function() {
-        if (!isAppScreen()) {
+        console.log("checking for submission");
+        var currentUrl = location.href;
+        if (!isAppScreen() || (currentUrl.indexOf("/submissions/")) < 0) {
             return;
-        }
-        var resultContainerMatches = getElementsByClassNamePrefix(document, "div", "result-container");
-        if (resultContainerMatches != null && resultContainerMatches.length > 0) {
-            var resultContainer = resultContainerMatches[0];
-            var resultArr = getElementsByClassNamePrefix(resultContainer, "div", "result");
-            var result = resultArr[0];
-            var successElementArr = getElementsByClassNamePrefix(result, "div", "success");
-            var failureElementArr = getElementsByClassNamePrefix(result, "div", "error");
-            var correctSubmission = null;
-            if (successElementArr !== null && successElementArr.length > 0) {
-                // correct submission
-                correctSubmission = true;
-            } else if (failureElementArr !== null && failureElementArr.length > 0) {
-                // incorrect submission
-                correctSubmission = false;
+        } else {
+            console.log("looking for result container");
+            var resultContainerMatches = getElementsByClassNamePrefix(document, "div", "result-container");
+            if (resultContainerMatches != null && resultContainerMatches.length > 0) {
+                var resultContainer = resultContainerMatches[0];
+                var resultArr = getElementsByClassNamePrefix(resultContainer, "div", "result");
+                if (resultArr != null && resultArr.length > 0) {
+                    var result = resultArr[0];
+                    var successElementArr = getElementsByClassNamePrefix(result, "div", "success");
+                    var failureElementArr = getElementsByClassNamePrefix(result, "div", "error");
+                    var correctSubmission = null;
+                    if (successElementArr !== null && successElementArr.length > 0) {
+                        // correct submission
+                        correctSubmission = true;
+                    } else if (failureElementArr != null && failureElementArr.length > 0) {
+                        // incorrect submission
+                        correctSubmission = false;
+                    }
+                    console.log("saving", correctSubmission);
+                    saveProblemData("correctSubmission", correctSubmission); 
+                }
             }
-            saveProblemData("correctSubmission", correctSubmission); 
         }
     },
     saveProblemData = function(dataKey, dataVal) {
