@@ -362,21 +362,17 @@ var options = {
                     console.log("adding NOTES AREA to", editorAreaParent);
                     mo.disconnect();
                     removeNotesPanel();
-                    var jsLib = document.createElement("script");
-                    jsLib.setAttribute("src", "https://cdn.quilljs.com/1.3.6/quill.js");
-                    document.body.appendChild(jsLib);
 
-                    var cssLib = document.createElement("link");
-                    cssLib.setAttribute("rel", "stylesheet");
-                    cssLib.setAttribute("href", "https://cdn.quilljs.com/1.3.6/quill.snow.css")
                     var notesArea = document.createElement("div");
-                    notesArea.innerHTML = "<h2>NOTES</h2><br><textarea style='height:100%;width:100%;'></textarea>";
-                    notesArea.style = "margin-top:10%;width:40%;text-align:center;";
+                    notesArea.innerHTML = "<div id='editor'><p>Hello World!</p> <p>Some initial <strong>bold</strong> text</p> <p><br></p></div>";
+                    notesArea.style = "width:40%;text-align:center;";
                     notesArea.id = "lcb_notesPanelId";
                     editorAreaParent.appendChild(notesArea);
                     
-                    var editor = new Quill(notesArea);  
-
+                    var quilScript = document.createElement("script");
+                    quilScript.innerHTML = "var quill = new Quill('#editor', { theme: 'snow' });";
+                    document.body.appendChild(quilScript);
+                                    
                     setObservers();
                 }
             }
@@ -391,12 +387,17 @@ var options = {
         app = document.getElementById('app'),
         fa = document.getElementById('favorite-app'),
         ea = document.getElementById('explore-app');
-
+        
         if (qa !== null) {
             mo.observe(qa, {childList: true, subtree: true});
-            resultCountNode = document.createElement('div');
-            resultCountNode.setAttribute('id', 'resultCountNode');
-            document.body.appendChild(resultCountNode);
+
+            var existingResultCountNode = document.getElementById("resultCountNode");
+
+            if (existingResultCountNode == null) {
+                resultCountNode = document.createElement('div');
+                resultCountNode.setAttribute('id', 'resultCountNode');
+                document.body.appendChild(resultCountNode);
+            }
         }
 
         if (app !== null) {
@@ -424,6 +425,15 @@ var options = {
     mo = new MutationObserver(appEvent);
 
 document.addEventListener('DOMContentLoaded', function (e) {
+    var jsLib = document.createElement("script");
+    jsLib.setAttribute("src", "https://cdn.quilljs.com/1.3.6/quill.js");
+    document.body.appendChild(jsLib);
+
+    var cssLib = document.createElement("link");
+    cssLib.setAttribute("rel", "stylesheet");
+    cssLib.setAttribute("href", "https://cdn.quilljs.com/1.3.6/quill.snow.css")
+    document.head.appendChild(cssLib);
+
     setObservers();
     chrome.storage.sync.get('lc_buddy_config', (opts) => {
         if (opts['lc_buddy_config'] === undefined) {
