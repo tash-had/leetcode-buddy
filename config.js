@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     var container = document.getElementById('container'),
         serverCompletionStatus = document.getElementById('serverCompletionStatus'),
+        notesPanel = document.getElementById('notesPanel'),
         announcement = document.getElementById('announcement'),
         acceptanceRate = document.getElementById('acceptanceRate'),
         difficulty = document.getElementById('difficulty'),
@@ -12,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (opts === undefined) {
             opts = {
                 serverCompletionStatus: false,
+                notesPanel: true,
                 announcement: false,
                 acceptanceRate: false,
                 difficulty: false,
@@ -24,6 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         serverCompletionStatus.checked = opts.serverCompletionStatus;
+        notesPanel.checked = opts.notesPanel;
         announcement.checked = opts.announcement;
         acceptanceRate.checked = opts.acceptanceRate;
         difficulty.checked = opts.difficulty;
@@ -35,6 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
     container.addEventListener('change', () => {
         var options = {
             serverCompletionStatus: serverCompletionStatus.checked,
+            notesPanel: notesPanel.checked,
             announcement: announcement.checked,
             acceptanceRate: acceptanceRate.checked,
             difficulty: difficulty.checked,

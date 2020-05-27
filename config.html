@@ -1,33 +1,38 @@
 <!doctype html>
 <html>
-    <head>
-        <title>LeetCode Buddy</title>
-        <style type="text/css">
-            body {
-                margin: 10px;
-                white-space: nowrap;
-            }
 
-            h1 {
-                font-size: 15px;
-                text-align: center;
-                padding-bottom: 0.5em;
-                border-bottom: 1px solid #000;
-            }
+<head>
+    <title>LeetCode Buddy</title>
+    <style type="text/css">
+        body {
+            margin: 10px;
+            white-space: nowrap;
+        }
 
-            #container > div {
-                float: left;
-                margin-bottom: 1em;
-            }
-        </style>
-        <script src="config.js"></script>
-    </head>
+        h1 {
+            font-size: 15px;
+            text-align: center;
+            padding-bottom: 0.5em;
+            border-bottom: 1px solid #000;
+        }
 
-    <body>
+        #container>div {
+            float: left;
+            margin-bottom: 1em;
+        }
+    </style>
+    <script src="config.js"></script>
+</head>
+
+<body>
+    <div id="configDiv">
         <h1>Configuration</h1>
         <div id="container">
             <div>
-                <span id="serverCompletionStatusLabel">Show Completion Status from Server</span>: <input id="serverCompletionStatus" type="checkbox" />
+                Show Completion Status from Server: <input id="serverCompletionStatus" type="checkbox" />
+            </div>
+            <div>
+                Notes: <input id="notesPanel" type="checkbox" />
             </div>
             <div>
                 Show Announcement: <input id="announcement" type="checkbox" />
@@ -48,5 +53,7 @@
                 Show Solved Difficulty Counts: <input id="solvedDifficultyCounts" type="checkbox" />
             </div>
         </div>
-    </body>
+    </div>
+</body>
+
 </html>

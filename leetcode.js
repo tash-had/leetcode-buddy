@@ -1,5 +1,6 @@
 var options = {
         serverCompletionStatus: false,
+        notesPanel: true,
         announcement: false,
         acceptanceRate: false,
         difficulty: false,
@@ -9,10 +10,16 @@ var options = {
         solvedDifficultyCounts: false
     },
     p_store = {},
+    toggledNotesAlready = false,
     updateOptions = function (newOptions) {
         if (options.serverCompletionStatus !== newOptions.serverCompletionStatus) {
             toggleServerCompletionStatus(newOptions.serverCompletionStatus);
             options.serverCompletionStatus = newOptions.serverCompletionStatus;
+        }
+
+        if (options.notesPanel !== newOptions.notesPanel) {
+            toggleNotesPanel(newOptions.notesPanel);
+            options.notesPanel = newOptions.notesPanel;
         }
 
         if (options.announcement !== newOptions.announcement) {
@@ -337,43 +344,87 @@ var options = {
             }
         }
     },
+    removeNotesPanel = function() {
+        var notesPanelElm = document.getElementById("lcb_notesPanelId");
+        if (notesPanelElm != null) {
+            notesPanelElm.parentNode.removeChild(notesPanelElm);
+        }
+    },
+    toggleNotesPanel = function (show) {
+        if (show) {
+            console.log("toggleNotesArea");
+            var editorArea = document.getElementsByClassName("react-codemirror2");
+            
+            if (editorArea != undefined && editorArea.length == 1) {
+                console.log("here is the long awaited", editorArea);
+                var editorAreaParent = editorArea[0].parentElement;
+                if (editorAreaParent) { 
+                    console.log("adding NOTES AREA to", editorAreaParent);
+                    mo.disconnect();
+                    removeNotesPanel();
+                    var jsLib = document.createElement("script");
+                    jsLib.setAttribute("src", "https://cdn.quilljs.com/1.3.6/quill.js");
+                    document.body.appendChild(jsLib);
+
+                    var cssLib = document.createElement("link");
+                    cssLib.setAttribute("rel", "stylesheet");
+                    cssLib.setAttribute("href", "https://cdn.quilljs.com/1.3.6/quill.snow.css")
+                    var notesArea = document.createElement("div");
+                    notesArea.innerHTML = "<h2>NOTES</h2><br><textarea style='height:100%;width:100%;'></textarea>";
+                    notesArea.style = "margin-top:10%;width:40%;text-align:center;";
+                    notesArea.id = "lcb_notesPanelId";
+                    editorAreaParent.appendChild(notesArea);
+                    
+                    var editor = new Quill(notesArea);  
+
+                    setObservers();
+                }
+            }
+            console.log("end of NOTES AREA");
+        } else {
+            console.log("REMOVING notes area :)");
+            removeNotesPanel();
+        }
+    },
+    setObservers = function () {
+        var qa = document.getElementById('question-app'),
+        app = document.getElementById('app'),
+        fa = document.getElementById('favorite-app'),
+        ea = document.getElementById('explore-app');
+
+        if (qa !== null) {
+            mo.observe(qa, {childList: true, subtree: true});
+            resultCountNode = document.createElement('div');
+            resultCountNode.setAttribute('id', 'resultCountNode');
+            document.body.appendChild(resultCountNode);
+        }
+
+        if (app !== null) {
+            mo.observe(app, {childList: true, subtree: true});
+        }
+
+        if (fa !== null) {
+            mo.observe(fa, {childList: true, subtree: true});
+        }
+
+        if (ea !== null) {
+            mo.observe(ea, {childList: true, subtree: true});
+        }
+    },
     appEvent = function () {
         toggleServerCompletionStatus(options.serverCompletionStatus);
+        toggleNotesPanel(options.notesPanel);
         toggleAnnouncement(options.announcement);
         toggleAcceptanceRate(options.acceptanceRate);
-        toggleDifficulty(options.difficulty);
         toggleLockedQuestions(options.lockedQuestions);
         toggleResultCountNode(options.resultCountNode);
         toggleSolvedDifficultyCounts(options.solvedDifficultyCounts);
         checkForSubmission();
-    };
+    },
+    mo = new MutationObserver(appEvent);
 
 document.addEventListener('DOMContentLoaded', function (e) {
-    var qa = document.getElementById('question-app'),
-        app = document.getElementById('app'),
-        fa = document.getElementById('favorite-app'),
-        ea = document.getElementById('explore-app'),
-        mo = new MutationObserver(appEvent);
-
-    if (qa !== null) {
-        mo.observe(qa, {childList: true, subtree: true});
-        resultCountNode = document.createElement('div');
-        resultCountNode.setAttribute('id', 'resultCountNode');
-        document.body.appendChild(resultCountNode);
-    }
-
-    if (app !== null) {
-        mo.observe(app, {childList: true, subtree: true});
-    }
-
-    if (fa !== null) {
-        mo.observe(fa, {childList: true, subtree: true});
-    }
-
-    if (ea !== null) {
-        mo.observe(ea, {childList: true, subtree: true});
-    }
-
+    setObservers();
     chrome.storage.sync.get('lc_buddy_config', (opts) => {
         if (opts['lc_buddy_config'] === undefined) {
             chrome.storage.sync.set({lc_buddy_config: opts});
