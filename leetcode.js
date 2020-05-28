@@ -364,7 +364,7 @@ var options = {
                     removeNotesPanel();
 
                     var notesArea = document.createElement("div");
-                    notesArea.innerHTML = "<div id='editor'><p>Hello World!</p> <p>Some initial <strong>bold</strong> text</p> <p><br></p></div>";
+                    notesArea.innerHTML = "<div id='editor'></div>";
                     notesArea.style = "width:40%;text-align:center;";
                     notesArea.id = "lcb_notesPanelId";
                     editorAreaParent.appendChild(notesArea);
@@ -372,7 +372,9 @@ var options = {
                     var quilScript = document.createElement("script");
                     quilScript.innerHTML = "var quill = new Quill('#editor', { theme: 'snow' });";
                     document.body.appendChild(quilScript);
-                                    
+                    
+                    var noteBtn = getElementsByClassNamePrefix(document, "div", "note-btn")[0];
+                    noteBtn.style = 'display:none;';
                     setObservers();
                 }
             }
@@ -380,6 +382,8 @@ var options = {
         } else {
             console.log("REMOVING notes area :)");
             removeNotesPanel();
+            var noteBtn = getElementsByClassNamePrefix(document, "div", "note-btn")[0];
+            noteBtn.style = '';
         }
     },
     setObservers = function () {
