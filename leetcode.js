@@ -88,7 +88,6 @@ function toggleServerCompletionStatus(show) {
             for (var i = 0; i < completionChecks.length; i++) {
                 completionChecks[i].style = '';
             }
-            console.log("toggleServerCompletionStatus: reset style");
         }
     } else {
         if (completionChecks !== null && completionChecks.length > 0) {
@@ -101,7 +100,6 @@ function toggleServerCompletionStatus(show) {
                     completionChecks[i].style = '';
                 }
             }
-            console.log("toggleServerCompletionStatus: set completion checks");
         }
     }
 };
@@ -259,39 +257,48 @@ function toggleSolvedDifficultyCounts(show) {
     }
 };
 
+function removeNotesPanel() {
+    console.log("removal has inititated")
+    var notesPanelElm = document.getElementById("lcb_notesPanelId");
+    if (notesPanelElm != null) {
+        notesPanelElm.parentNode.removeChild(notesPanelElm);
+    }
+    var notesPanelScript = document.getElementById("quilScriptId");
+    if (notesPanelScript != null) {
+        notesPanelScript.parentNode.removeChild(notesPanelScript);
+    }
+}
+
 function toggleNotesPanel(show) {
     if (show) {
-        console.log("toggleNotesArea");
         var editorAreaArr = document.getElementsByClassName("react-codemirror2");
         var notesEditor = document.getElementById("lcb_notesPanelId");
 
         if (editorAreaArr != undefined && editorAreaArr.length == 1 && notesEditor == null && p_store != null) {
             var probName = getProblemTitle().problemName;
             if (probName != null) {
-                console.log("here is the long awaited", editorAreaArr);
                 var editorAreaParent = editorAreaArr[0].parentElement;
                 if (editorAreaParent) {
-                    console.log("adding NOTES AREA to", editorAreaParent);
                     mo.disconnect();
+                    removeNotesPanel();
+
                     var probEntry = p_store[probName];
                     var oldNotes = "";
                     if ("notes" in probEntry) {
                         oldNotes = JSON.parse(probEntry["notes"])["ops"][0]["insert"];
                     }
+
                     var notesArea = document.createElement("div");
                     notesArea.innerHTML = "<div id='editor'>" + oldNotes + "</div>";
-                    notesArea.style = "width:40%;text-align:center;";
+                    notesArea.style = "width:30%;text-align:center;";
                     notesArea.id = "lcb_notesPanelId";
-                    
-                    var ne = document.getElementById("lcb_notesPanelId");
-                    if (ne == null) {
-                        editorAreaParent.appendChild(notesArea);
-                        var quilScript = document.createElement("script");
-                        quilScript.src = chrome.runtime.getURL('notes.js');
-                        document.body.appendChild(quilScript);
-                    }
-    
-                    
+                    editorAreaParent.appendChild(notesArea);
+
+                    var quilScript = document.createElement("script");
+                    quilScript.src = chrome.runtime.getURL('notes.js');
+                    quilScript.id = "quilScriptId";
+                    document.body.appendChild(quilScript);
+
                     // typing causes a redraw so text doesnt show up... fix this
                     var noteBtn = getElementsByClassNamePrefix(document, "div", "note-btn")[0];
                     noteBtn.style = 'display:none;';
@@ -299,13 +306,8 @@ function toggleNotesPanel(show) {
                 }
             }
         }
-        console.log("end of NOTES AREA");
     } else {
-        // remove notes panel
-        var notesPanelElm = document.getElementById("lcb_notesPanelId");
-        if (notesPanelElm != null) {
-            notesPanelElm.parentNode.removeChild(notesPanelElm);
-        }
+        removeNotesPanel();
         // show leetcode built in notes btn
         var noteBtn = getElementsByClassNamePrefix(document, "div", "note-btn")[0];
         noteBtn.style = '';
@@ -333,13 +335,10 @@ function saveProblemData(dataKey, dataVal) {
             cur_p_store[problemName] = {};
             cur_p_store[problemName][dataKey] = dataVal;
             cur_p_store[problemName]["problemNumber"] = problemNumber;
-            console.log("question was just saved");
         } else {
             // question has been submitted before
-            console.log("question has been submitted before");
             cur_p_store[problemName][dataKey] = dataVal;
         }
-        console.log(cur_p_store);
         p_store = cur_p_store;
         chrome.storage.sync.set({
             lc_buddy_p_store: cur_p_store
@@ -379,7 +378,6 @@ function onPageMutated() {
     } else {
         var notesData = notesPanelData.innerHTML;
         notesPanelData.parentNode.removeChild(notesPanelData);
-        var title = getProblemTitle().problemName;
         saveProblemData("notes", notesData);
     }
 }
@@ -434,7 +432,7 @@ document.addEventListener('DOMContentLoaded', function(e) {
     injectNotesPanelLibs();
     resetCommonCache();
     setObservers();
-    
+    console.log("DOC HAS BEEN LOADED");
     // reset vals 
     p_store = {}
 
