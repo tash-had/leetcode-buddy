@@ -1,3 +1,5 @@
+var problemTitleObj = null;
+
 function getElementsByClassNamePrefix(oElm, strTagName, strClassName) {
     if (oElm === undefined || oElm === null) {
         return null;
@@ -57,16 +59,22 @@ function isExploreAppScreen() {
 }
 
 function getProblemTitle() {
-    if (isAppScreen()) {
+    if (isAppScreen() && problemTitleObj == null) {
         var problemTitleDivArr = document.getElementsByClassName("css-v3d350");
-        var problemTitleDiv = problemTitleDivArr[0];
-        var problemNamePartsArr = problemTitleDiv.textContent.split(". ");
-        var problemNumber = parseInt(problemNamePartsArr[0].trim());
-        var problemName = problemNamePartsArr[1].trim();
-        return {
-            "problemName": problemName,
-            "problemNumber": problemNumber
+        if (problemTitleDivArr.length > 0) {
+            var problemTitleDiv = problemTitleDivArr[0];
+            var problemNamePartsArr = problemTitleDiv.textContent.split(". ");
+            var problemNumber = parseInt(problemNamePartsArr[0].trim());
+            var problemName = problemNamePartsArr[1].trim();
+            problemTitleObj = {
+                "problemName": problemName,
+                "problemNumber": problemNumber
+            }
         }
     }
-    return null;
+    return problemTitleObj;
+}
+
+function resetCommonCache() {
+    problemTitleObj = null;
 }

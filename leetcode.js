@@ -265,31 +265,38 @@ function toggleNotesPanel(show) {
         var editorAreaArr = document.getElementsByClassName("react-codemirror2");
         var notesEditor = document.getElementById("lcb_notesPanelId");
 
-        if (editorAreaArr != undefined && editorAreaArr.length == 1 && notesEditor == null) {
-            console.log("here is the long awaited", editorAreaArr);
-            var editorAreaParent = editorAreaArr[0].parentElement;
-            if (editorAreaParent) {
-                console.log("adding NOTES AREA to", editorAreaParent);
-                mo.disconnect();
-
-                var notesArea = document.createElement("div");
-                notesArea.innerHTML = "<div id='editor'></div>";
-                notesArea.style = "width:40%;text-align:center;";
-                notesArea.id = "lcb_notesPanelId";
-                
-                var ne = document.getElementById("lcb_notesPanelId");
-                if (ne == null) {
-                    editorAreaParent.appendChild(notesArea);
-                    var quilScript = document.createElement("script");
-                    quilScript.src = chrome.runtime.getURL('notes.js');
-                    document.body.appendChild(quilScript);
+        if (editorAreaArr != undefined && editorAreaArr.length == 1 && notesEditor == null && p_store != null) {
+            var probName = getProblemTitle().problemName;
+            if (probName != null) {
+                console.log("here is the long awaited", editorAreaArr);
+                var editorAreaParent = editorAreaArr[0].parentElement;
+                if (editorAreaParent) {
+                    console.log("adding NOTES AREA to", editorAreaParent);
+                    mo.disconnect();
+                    var probEntry = p_store[probName];
+                    var oldNotes = "";
+                    if ("notes" in probEntry) {
+                        oldNotes = JSON.parse(probEntry["notes"])["ops"][0]["insert"];
+                    }
+                    var notesArea = document.createElement("div");
+                    notesArea.innerHTML = "<div id='editor'>" + oldNotes + "</div>";
+                    notesArea.style = "width:40%;text-align:center;";
+                    notesArea.id = "lcb_notesPanelId";
+                    
+                    var ne = document.getElementById("lcb_notesPanelId");
+                    if (ne == null) {
+                        editorAreaParent.appendChild(notesArea);
+                        var quilScript = document.createElement("script");
+                        quilScript.src = chrome.runtime.getURL('notes.js');
+                        document.body.appendChild(quilScript);
+                    }
+    
+                    
+                    // typing causes a redraw so text doesnt show up... fix this
+                    var noteBtn = getElementsByClassNamePrefix(document, "div", "note-btn")[0];
+                    noteBtn.style = 'display:none;';
+                    setObservers();
                 }
-
-                
-                // typing causes a redraw so text doesnt show up... fix this
-                var noteBtn = getElementsByClassNamePrefix(document, "div", "note-btn")[0];
-                noteBtn.style = 'display:none;';
-                setObservers();
             }
         }
         console.log("end of NOTES AREA");
@@ -360,14 +367,21 @@ function injectNotesPanelLibs() {
 function onPageMutated() {
     // check if this change was caused by an update by a DOM update in the notespanel.
     var notesPanelData = document.getElementById("notesPanelData");
-    toggleServerCompletionStatus(options.serverCompletionStatus);
-    toggleNotesPanel(options.notesPanel);
-    toggleAnnouncement(options.announcement);
-    toggleAcceptanceRate(options.acceptanceRate);
-    toggleLockedQuestions(options.lockedQuestions);
-    toggleResultCountNode(options.resultCountNode);
-    toggleSolvedDifficultyCounts(options.solvedDifficultyCounts);
-    checkForSubmission();
+    if (notesPanelData == null) {
+        toggleServerCompletionStatus(options.serverCompletionStatus);
+        toggleNotesPanel(options.notesPanel);
+        toggleAnnouncement(options.announcement);
+        toggleAcceptanceRate(options.acceptanceRate);
+        toggleLockedQuestions(options.lockedQuestions);
+        toggleResultCountNode(options.resultCountNode);
+        toggleSolvedDifficultyCounts(options.solvedDifficultyCounts);
+        checkForSubmission();
+    } else {
+        var notesData = notesPanelData.innerHTML;
+        notesPanelData.parentNode.removeChild(notesPanelData);
+        var title = getProblemTitle().problemName;
+        saveProblemData("notes", notesData);
+    }
 }
 
 function setObservers() {
@@ -418,7 +432,12 @@ function setObservers() {
 
 document.addEventListener('DOMContentLoaded', function(e) {
     injectNotesPanelLibs();
+    resetCommonCache();
     setObservers();
+    
+    // reset vals 
+    p_store = {}
+
     chrome.storage.sync.get('lc_buddy_config', (opts) => {
         if (opts['lc_buddy_config'] === undefined) {
             chrome.storage.sync.set({

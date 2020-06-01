@@ -23,16 +23,17 @@ setInterval(function () {
 
 function addDataToDom(dataId, data) {
     var existingDataDiv = document.getElementById(dataId);
-    if (dataId == null) {
+    if (existingDataDiv == null) {
         var dataDiv = document.createElement("div");
         dataDiv.setAttribute("id", dataId);
         dataDiv.innerHTML = data;
         dataDiv.style = 'display:none;';
-        document.getElementById("app").appendChild(existingDataDiv);
+        var appElement = document.getElementById("app");
+        console.log('HERE YOU ARE', appElement);
+        appElement.appendChild(dataDiv);
     } else {
         existingDataDiv.innerHTML = data;
     }
-
 }
 
 // Check for unsaved data
