@@ -9,8 +9,9 @@ var options = {
     resultCount: 0,
     solvedDifficultyCounts: false
 };
+
 var p_store = {};
-var toggledNotesAlready = false;
+var mo = null;
 
 function updateOptions(newOptions) {
     if (options.serverCompletionStatus !== newOptions.serverCompletionStatus) {
@@ -52,64 +53,6 @@ function updateOptions(newOptions) {
         toggleSolvedDifficultyCounts(newOptions.solvedDifficultyCounts);
         options.solvedDifficultyCounts = newOptions.solvedDifficultyCounts;
     }
-};
-
-function getElementsByClassNamePrefix(oElm, strTagName, strClassName) {
-    if (oElm === undefined || oElm === null) {
-        return null;
-    }
-    var arrElements = (strTagName == "*" && oElm.all) ? oElm.all :
-        oElm.getElementsByTagName(strTagName);
-    var arrReturnElements = new Array();
-    strClassName = strClassName.replace(/\-/g, "\\-");
-    var oRegExp = new RegExp(strClassName);
-    var oElement;
-    for (var i = 0; i < arrElements.length; i++) {
-        oElement = arrElements[i];
-        if (oRegExp.test(oElement.className)) {
-            arrReturnElements.push(oElement);
-        }
-    }
-    return (arrReturnElements)
-};
-
-function isAppScreen() {
-    var appDiv = document.getElementById("app");
-    if (appDiv !== null) {
-        return true;
-    }
-    return false;
-};
-
-function isQuestionAppScreen() {
-    var questionApp = document.getElementById("question-app");
-    if (questionApp !== null) {
-        return true;
-    }
-    return false;
-};
-
-function isFavoriteAppScreen() {
-    var favoriteApp = document.getElementById("favorite-app");
-    if (favoriteApp !== null) {
-        return true;
-    }
-    return false;
-};
-
-function isExploreAppScreen() {
-    var exploreApp = document.getElementById("explore-app");
-    if (exploreApp !== null) {
-        var chapterList = document.getElementsByClassName("chapter-list-base");
-        if (chapterList.length == 0) {
-            var expandableChapterList = document.getElementsByClassName("expandable-chapter-list-base");
-            if (expandableChapterList.length == 0) {
-                return false;
-            }
-        }
-        return true;
-    }
-    return false;
 };
 
 function toggleServerCompletionStatus(show) {
@@ -163,20 +106,6 @@ function toggleServerCompletionStatus(show) {
     }
 };
 
-function getProblemTitle() {
-    if (isAppScreen()) {
-        var problemTitleDivArr = document.getElementsByClassName("css-v3d350");
-        var problemTitleDiv = problemTitleDivArr[0];
-        var problemNamePartsArr = problemTitleDiv.textContent.split(". ");
-        var problemNumber = parseInt(problemNamePartsArr[0].trim());
-        var problemName = problemNamePartsArr[1].trim();
-        return {
-            "problemName": problemName,
-            "problemNumber": problemNumber
-        };
-    }
-    return null;
-};
 
 function checkForSubmission() {
     var currentUrl = location.href;
@@ -203,38 +132,6 @@ function checkForSubmission() {
             }
         }
     }
-};
-
-function saveProblemData(dataKey, dataVal) {
-    var problemTitle = getProblemTitle();
-    var problemNumber = problemTitle["problemNumber"];
-    var problemName = problemTitle["problemName"];
-
-    if ((problemName in p_store) && (p_store[problemName][dataKey] == dataVal)) {
-        // given data already exists in store and value hasn't changed. 
-        return;
-    }
-
-    chrome.storage.sync.get('lc_buddy_p_store', (store) => {
-        var cur_p_store = store['lc_buddy_p_store'];
-
-        if (cur_p_store === undefined) {
-            cur_p_store = {};
-        }
-        if (!(problemName in cur_p_store)) {
-            // question has never been submitted before
-            cur_p_store[problemName] = {};
-            cur_p_store[problemName][dataKey] = dataVal;
-            cur_p_store[problemName]["problemNumber"] = problemNumber;
-        } else {
-            // question has been submitted before
-            cur_p_store[problemName][dataKey] = dataVal;
-        }
-        p_store = cur_p_store;
-        chrome.storage.sync.set({
-            lc_buddy_p_store: cur_p_store
-        });
-    });
 };
 
 function toggleAnnouncement(show) {
@@ -327,7 +224,6 @@ function toggleLockedQuestions(show) {
                 }
             }
         }
-
         toggleResultCountNode(options.resultCountNode);
     }
 };
@@ -363,35 +259,33 @@ function toggleSolvedDifficultyCounts(show) {
     }
 };
 
-function removeNotesPanel() {
-    var notesPanelElm = document.getElementById("lcb_notesPanelId");
-    if (notesPanelElm != null) {
-        notesPanelElm.parentNode.removeChild(notesPanelElm);
-    }
-};
-
 function toggleNotesPanel(show) {
     if (show) {
         console.log("toggleNotesArea");
-        var editorArea = document.getElementsByClassName("react-codemirror2");
+        var editorAreaArr = document.getElementsByClassName("react-codemirror2");
+        var notesEditor = document.getElementById("lcb_notesPanelId");
 
-        if (editorArea != undefined && editorArea.length == 1) {
-            console.log("here is the long awaited", editorArea);
-            var editorAreaParent = editorArea[0].parentElement;
+        if (editorAreaArr != undefined && editorAreaArr.length == 1 && notesEditor == null) {
+            console.log("here is the long awaited", editorAreaArr);
+            var editorAreaParent = editorAreaArr[0].parentElement;
             if (editorAreaParent) {
                 console.log("adding NOTES AREA to", editorAreaParent);
                 mo.disconnect();
-                removeNotesPanel();
 
                 var notesArea = document.createElement("div");
                 notesArea.innerHTML = "<div id='editor'></div>";
                 notesArea.style = "width:40%;text-align:center;";
                 notesArea.id = "lcb_notesPanelId";
-                editorAreaParent.appendChild(notesArea);
+                
+                var ne = document.getElementById("lcb_notesPanelId");
+                if (ne == null) {
+                    editorAreaParent.appendChild(notesArea);
+                    var quilScript = document.createElement("script");
+                    quilScript.src = chrome.runtime.getURL('notes.js');
+                    document.body.appendChild(quilScript);
+                }
 
-                var quilScript = document.createElement("script");
-                quilScript.innerHTML = "var quill = new Quill('#editor', { theme: 'snow' });";
-                document.body.appendChild(quilScript);
+                
                 // typing causes a redraw so text doesnt show up... fix this
                 var noteBtn = getElementsByClassNamePrefix(document, "div", "note-btn")[0];
                 noteBtn.style = 'display:none;';
@@ -400,14 +294,86 @@ function toggleNotesPanel(show) {
         }
         console.log("end of NOTES AREA");
     } else {
-        console.log("REMOVING notes area :)");
-        removeNotesPanel();
+        // remove notes panel
+        var notesPanelElm = document.getElementById("lcb_notesPanelId");
+        if (notesPanelElm != null) {
+            notesPanelElm.parentNode.removeChild(notesPanelElm);
+        }
+        // show leetcode built in notes btn
         var noteBtn = getElementsByClassNamePrefix(document, "div", "note-btn")[0];
         noteBtn.style = '';
     }
 };
 
+function saveProblemData(dataKey, dataVal) {
+    var problemTitle = getProblemTitle();
+    var problemNumber = problemTitle["problemNumber"];
+    var problemName = problemTitle["problemName"];
+
+    if ((problemName in p_store) && (p_store[problemName][dataKey] == dataVal)) {
+        // given data already exists in store and value hasn't changed. 
+        return;
+    }
+
+    chrome.storage.sync.get('lc_buddy_p_store', (store) => {
+        var cur_p_store = store['lc_buddy_p_store'];
+
+        if (cur_p_store === undefined) {
+            cur_p_store = {};
+        }
+        if (!(problemName in cur_p_store)) {
+            // question has never been submitted before
+            cur_p_store[problemName] = {};
+            cur_p_store[problemName][dataKey] = dataVal;
+            cur_p_store[problemName]["problemNumber"] = problemNumber;
+            console.log("question was just saved");
+        } else {
+            // question has been submitted before
+            console.log("question has been submitted before");
+            cur_p_store[problemName][dataKey] = dataVal;
+        }
+        console.log(cur_p_store);
+        p_store = cur_p_store;
+        chrome.storage.sync.set({
+            lc_buddy_p_store: cur_p_store
+        });
+    });
+}
+
+function injectNotesPanelLibs() {
+    if (isAppScreen()) {
+        var jquery = document.createElement("script");
+        jquery.setAttribute("src", "https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js");
+        document.body.appendChild(jquery);
+    
+        var quillJs = document.createElement("script");
+        quillJs.setAttribute("src", "https://cdn.quilljs.com/1.3.6/quill.js");
+        document.body.appendChild(quillJs);
+    
+        var quillCss = document.createElement("link");
+        quillCss.setAttribute("rel", "stylesheet");
+        quillCss.setAttribute("href", "https://cdn.quilljs.com/1.3.6/quill.snow.css")
+        document.head.appendChild(quillCss);    
+    }
+}
+
+function onPageMutated() {
+    // check if this change was caused by an update by a DOM update in the notespanel.
+    var notesPanelData = document.getElementById("notesPanelData");
+    toggleServerCompletionStatus(options.serverCompletionStatus);
+    toggleNotesPanel(options.notesPanel);
+    toggleAnnouncement(options.announcement);
+    toggleAcceptanceRate(options.acceptanceRate);
+    toggleLockedQuestions(options.lockedQuestions);
+    toggleResultCountNode(options.resultCountNode);
+    toggleSolvedDifficultyCounts(options.solvedDifficultyCounts);
+    checkForSubmission();
+}
+
 function setObservers() {
+    if (mo == null) {
+        mo = new MutationObserver(onPageMutated);
+    }
     var qa = document.getElementById('question-app'),
         app = document.getElementById('app'),
         fa = document.getElementById('favorite-app'),
@@ -420,7 +386,6 @@ function setObservers() {
         });
 
         var existingResultCountNode = document.getElementById("resultCountNode");
-
         if (existingResultCountNode == null) {
             resultCountNode = document.createElement('div');
             resultCountNode.setAttribute('id', 'resultCountNode');
@@ -450,29 +415,9 @@ function setObservers() {
     }
 };
 
-function appEvent() {
-    toggleServerCompletionStatus(options.serverCompletionStatus);
-    toggleNotesPanel(options.notesPanel);
-    toggleAnnouncement(options.announcement);
-    toggleAcceptanceRate(options.acceptanceRate);
-    toggleLockedQuestions(options.lockedQuestions);
-    toggleResultCountNode(options.resultCountNode);
-    toggleSolvedDifficultyCounts(options.solvedDifficultyCounts);
-    checkForSubmission();
-};
-
-var mo = new MutationObserver(appEvent);
 
 document.addEventListener('DOMContentLoaded', function(e) {
-    var jsLib = document.createElement("script");
-    jsLib.setAttribute("src", "https://cdn.quilljs.com/1.3.6/quill.js");
-    document.body.appendChild(jsLib);
-
-    var cssLib = document.createElement("link");
-    cssLib.setAttribute("rel", "stylesheet");
-    cssLib.setAttribute("href", "https://cdn.quilljs.com/1.3.6/quill.snow.css")
-    document.head.appendChild(cssLib);
-
+    injectNotesPanelLibs();
     setObservers();
     chrome.storage.sync.get('lc_buddy_config', (opts) => {
         if (opts['lc_buddy_config'] === undefined) {

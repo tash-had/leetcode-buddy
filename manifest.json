@@ -11,7 +11,7 @@
         {
             "matches": ["https://leetcode.com/*"],
             "css": ["leetcode.css"],
-            "js": ["leetcode.js"],
+            "js": ["common.js", "leetcode.js"],
             "run_at": "document_start",
             "all_frames": true
         }
@@ -26,5 +26,9 @@
 
     "browser_action": {
         "default_popup": "config.html"
-    }
+    },
+
+    "web_accessible_resources": [
+        "notes.js"
+    ]
 }
