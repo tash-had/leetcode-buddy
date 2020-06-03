@@ -258,7 +258,6 @@ function toggleSolvedDifficultyCounts(show) {
 };
 
 function removeNotesPanel() {
-    console.log("removal has inititated")
     var notesPanelElm = document.getElementById("lcb_notesPanelId");
     if (notesPanelElm != null) {
         notesPanelElm.parentNode.removeChild(notesPanelElm);
@@ -273,7 +272,12 @@ function toggleNotesPanel(show) {
     if (show) {
         var editorAreaArr = document.getElementsByClassName("react-codemirror2");
         var notesEditor = document.getElementById("lcb_notesPanelId");
-
+        if (notesEditor != null) {
+            // deal with a glitch where javascript puts two headers for the notes editor
+            if (notesEditor.children.length > 2) {
+                notesEditor.removeChild(notesEditor.firstChild);
+            }
+        }
         if (editorAreaArr != undefined && editorAreaArr.length == 1 && notesEditor == null && p_store != null) {
             var probName = getProblemTitle().problemName;
             if (probName != null) {
@@ -360,6 +364,10 @@ function injectNotesPanelLibs() {
         quillCss.setAttribute("rel", "stylesheet");
         quillCss.setAttribute("href", "https://cdn.quilljs.com/1.3.6/quill.snow.css")
         document.head.appendChild(quillCss);    
+        
+        var notifyJs = document.createElement("script");
+        notifyJs.setAttribute("src", chrome.runtime.getURL('notify.min.js'));
+        document.body.appendChild(notifyJs);    
     }
 }
 

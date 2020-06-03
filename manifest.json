@@ -29,6 +29,7 @@
     },
 
     "web_accessible_resources": [
-        "notes.js"
+        "notes.js",
+        "notify.min.js"
     ]
 }

@@ -29,11 +29,16 @@ function addDataToDom(dataId, data) {
         dataDiv.innerHTML = data;
         dataDiv.style = 'display:none;';
         var appElement = document.getElementById("app");
-        console.log('HERE YOU ARE', appElement);
         appElement.appendChild(dataDiv);
     } else {
         existingDataDiv.innerHTML = data;
     }
+    $.notify("Autosaved.", {
+        position: "right bottom",
+        className: "success",
+        arrowShow: false,
+        autoHideDelay: 3000
+    });
 }
 
 // Check for unsaved data
