@@ -289,7 +289,7 @@ function toggleNotesPanel(show) {
                     var probEntry = p_store[probName];
                     var oldNotes = "";
                     if ("notes" in probEntry) {
-                        oldNotes = JSON.parse(probEntry["notes"])["ops"][0]["insert"];
+                        oldNotes = probEntry["notes"];
                     }
 
                     var notesArea = document.createElement("div");
@@ -440,7 +440,6 @@ document.addEventListener('DOMContentLoaded', function(e) {
     injectNotesPanelLibs();
     resetCommonCache();
     setObservers();
-    console.log("DOC HAS BEEN LOADED");
     // reset vals 
     p_store = {}
 

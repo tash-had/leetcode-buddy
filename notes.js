@@ -16,7 +16,10 @@ quill.on('text-change', function (delta) {
 // Save periodically
 setInterval(function () {
     if (change.length() > 0) {
-        addDataToDom("notesPanelData", JSON.stringify(quill.getContents()));
+        var myEditor = document.querySelector('#editor')
+        var textAsHTML = myEditor.children[0].innerHTML
+        addDataToDom("notesPanelData", textAsHTML);
+
         change = new Delta();
     }
 }, 5 * 1000);
@@ -36,8 +39,7 @@ function addDataToDom(dataId, data) {
     $.notify("Autosaved.", {
         position: "right bottom",
         className: "success",
-        arrowShow: false,
-        autoHideDelay: 3000
+        autoHideDelay: 2500
     });
 }
 
