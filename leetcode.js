@@ -262,7 +262,7 @@ function removeNotesPanel() {
     if (notesPanelElm != null) {
         notesPanelElm.parentNode.removeChild(notesPanelElm);
     }
-    var notesPanelScript = document.getElementById("quilScriptId");
+    var notesPanelScript = document.getElementById("notesPanelScriptId");
     if (notesPanelScript != null) {
         notesPanelScript.parentNode.removeChild(notesPanelScript);
     }
@@ -297,12 +297,12 @@ function toggleNotesPanel(show) {
                     notesArea.style = "width:30%;text-align:center;";
                     notesArea.id = "lcb_notesPanelId";
                     editorAreaParent.appendChild(notesArea);
-
-                    var quilScript = document.createElement("script");
-                    quilScript.src = chrome.runtime.getURL('notes.js');
-                    quilScript.id = "quilScriptId";
-                    document.body.appendChild(quilScript);
-
+                    
+                    var initNotesScript = document.createElement("script");
+                    initNotesScript.innerHTML = "initializeNotesEditor();";
+                    initNotesScript.id = "notesPanelScriptId";
+                    document.body.appendChild(initNotesScript);
+                    
                     // typing causes a redraw so text doesnt show up... fix this
                     var noteBtn = getElementsByClassNamePrefix(document, "div", "note-btn")[0];
                     noteBtn.style = 'display:none;';
@@ -353,21 +353,25 @@ function saveProblemData(dataKey, dataVal) {
 function injectNotesPanelLibs() {
     if (isAppScreen()) {
         var jquery = document.createElement("script");
-        jquery.setAttribute("src", "https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js");
+        jquery.src = "https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js";
         document.body.appendChild(jquery);
     
         var quillJs = document.createElement("script");
-        quillJs.setAttribute("src", "https://cdn.quilljs.com/1.3.6/quill.js");
+        quillJs.src = "https://cdn.quilljs.com/1.3.6/quill.js";
         document.body.appendChild(quillJs);
     
         var quillCss = document.createElement("link");
-        quillCss.setAttribute("rel", "stylesheet");
-        quillCss.setAttribute("href", "https://cdn.quilljs.com/1.3.6/quill.snow.css")
+        quillCss.rel = "stylesheet";
+        quillCss.href = "https://cdn.quilljs.com/1.3.6/quill.snow.css";
         document.head.appendChild(quillCss);    
         
         var notifyJs = document.createElement("script");
-        notifyJs.setAttribute("src", chrome.runtime.getURL('notify.min.js'));
-        document.body.appendChild(notifyJs);    
+        notifyJs.src = chrome.runtime.getURL('notify.min.js');
+        document.body.appendChild(notifyJs);
+
+        var quilScript = document.createElement("script");
+        quilScript.src = chrome.runtime.getURL('notes.js');
+        document.body.appendChild(quilScript);
     }
 }
 
@@ -408,7 +412,7 @@ function setObservers() {
         var existingResultCountNode = document.getElementById("resultCountNode");
         if (existingResultCountNode == null) {
             resultCountNode = document.createElement('div');
-            resultCountNode.setAttribute('id', 'resultCountNode');
+            resultCountNode.id = "resultCountNode";
             document.body.appendChild(resultCountNode);
         }
     }
@@ -440,6 +444,7 @@ document.addEventListener('DOMContentLoaded', function(e) {
     injectNotesPanelLibs();
     resetCommonCache();
     setObservers();
+
     // reset vals 
     p_store = {}
 
