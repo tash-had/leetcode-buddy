@@ -1,6 +1,7 @@
 var options = {
     serverCompletionStatus: false,
     notesPanel: true,
+    notesPanelWidth: 30,
     announcement: false,
     acceptanceRate: false,
     difficulty: false,
@@ -24,6 +25,11 @@ function updateOptions(newOptions) {
         options.notesPanel = newOptions.notesPanel;
     }
 
+    if (options.notesPanelWidth !== newOptions.notesPanelWidth) {
+        toggleNotesPanelWidth(newOptions.notesPanelWidth);
+        options.notesPanelWidth = newOptions.notesPanelWidth;
+    }
+    
     if (options.announcement !== newOptions.announcement) {
         toggleAnnouncement(newOptions.announcement);
         options.announcement = newOptions.announcement;
@@ -317,6 +323,14 @@ function toggleNotesPanel(show) {
     }
 };
 
+function toggleNotesPanelWidth(newWidth) {
+    var notesPanelDiv = document.getElementById("lcb_notesPanelId");
+    if (notesPanelDiv != null) {
+        var newWidthStr = newWidth.toString() + "%;";
+        notesPanelDiv.style = "width:" + newWidthStr;
+    }
+}
+
 function saveProblemData(dataKey, dataVal) {
     var problemTitle = getProblemTitle();
     var problemNumber = problemTitle["problemNumber"];
@@ -380,6 +394,7 @@ function onPageMutated() {
     if (notesPanelData == null) {
         toggleServerCompletionStatus(options.serverCompletionStatus);
         toggleNotesPanel(options.notesPanel);
+        toggleNotesPanelWidth(options.notesPanelWidth);
         toggleAnnouncement(options.announcement);
         toggleAcceptanceRate(options.acceptanceRate);
         toggleLockedQuestions(options.lockedQuestions);

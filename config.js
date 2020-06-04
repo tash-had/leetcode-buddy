@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     var container = document.getElementById('container'),
         serverCompletionStatus = document.getElementById('serverCompletionStatus'),
         notesPanel = document.getElementById('notesPanel'),
+        notesPanelWidth = document.getElementById('notesPanelWidth'),
         announcement = document.getElementById('announcement'),
         acceptanceRate = document.getElementById('acceptanceRate'),
         difficulty = document.getElementById('difficulty'),
@@ -14,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
             opts = {
                 serverCompletionStatus: false,
                 notesPanel: true,
+                notesPanelWidth: 30,
                 announcement: false,
                 acceptanceRate: false,
                 difficulty: false,
@@ -27,6 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         serverCompletionStatus.checked = opts.serverCompletionStatus;
         notesPanel.checked = opts.notesPanel;
+        notesPanelWidth.value = opts.notesPanelWidth;
         announcement.checked = opts.announcement;
         acceptanceRate.checked = opts.acceptanceRate;
         difficulty.checked = opts.difficulty;
@@ -39,6 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
         var options = {
             serverCompletionStatus: serverCompletionStatus.checked,
             notesPanel: notesPanel.checked,
+            notesPanelWidth: notesPanelWidth.value,
             announcement: announcement.checked,
             acceptanceRate: acceptanceRate.checked,
             difficulty: difficulty.checked,
