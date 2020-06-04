@@ -21,6 +21,7 @@ function updateOptions(newOptions) {
     }
 
     if (options.notesPanel !== newOptions.notesPanel) {
+        console.log("NOTES PANEL?", newOptions.notesPanel);
         toggleNotesPanel(newOptions.notesPanel);
         options.notesPanel = newOptions.notesPanel;
     }
@@ -264,8 +265,10 @@ function toggleSolvedDifficultyCounts(show) {
 };
 
 function removeNotesPanel() {
+    console.log("Removing");
     var notesPanelElm = document.getElementById("lcb_notesPanelId");
     if (notesPanelElm != null) {
+        console.log("rrr")
         notesPanelElm.parentNode.removeChild(notesPanelElm);
     }
     var notesPanelScript = document.getElementById("notesPanelScriptId");
@@ -276,6 +279,7 @@ function removeNotesPanel() {
 
 function toggleNotesPanel(show) {
     if (show) {
+        console.log("Recieved SHOW notes");
         var editorAreaArr = document.getElementsByClassName("react-codemirror2");
         var notesEditor = document.getElementById("lcb_notesPanelId");
         if (notesEditor != null) {
@@ -318,8 +322,10 @@ function toggleNotesPanel(show) {
     } else {
         removeNotesPanel();
         // show leetcode built in notes btn
-        var noteBtn = getElementsByClassNamePrefix(document, "div", "note-btn")[0];
-        noteBtn.style = '';
+        var noteBtn = getElementsByClassNamePrefix(document, "div", "note-btn");
+        if (noteBtn && noteBtn.length > 0) {
+            noteBtn[0].style = '';
+        }
     }
 };
 
@@ -393,6 +399,7 @@ function onPageMutated() {
     var notesPanelData = document.getElementById("notesPanelData");
     if (notesPanelData == null) {
         toggleServerCompletionStatus(options.serverCompletionStatus);
+        console.log("NOTES PANEL FAM?", options.notesPanel);
         toggleNotesPanel(options.notesPanel);
         toggleNotesPanelWidth(options.notesPanelWidth);
         toggleAnnouncement(options.announcement);
@@ -424,10 +431,10 @@ function setObservers() {
         });
 
         var existingResultCountNode = document.getElementById("resultCountNode");
-        if (existingResultCountNode == null) {
-            resultCountNode = document.createElement('div');
-            resultCountNode.id = "resultCountNode";
-            document.body.appendChild(resultCountNode);
+        if (!existingResultCountNode) {
+            existingResultCountNode = document.createElement('div');
+            existingResultCountNode.id = "resultCountNode";
+            document.body.appendChild(existingResultCountNode);
         }
     }
 

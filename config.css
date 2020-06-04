@@ -10,15 +10,14 @@ h1 {
     font-weight: 100;
 }
 
-/* #configDiv {
+#configDiv {
     width: 300px;
     height: 405px;
-    position: absolute;
     top: 20%;
     left: 0px;
     right: 0px;
     margin: 0px auto;
-} */
+}
 
 input[type=checkbox] {
     display: none;
@@ -37,7 +36,7 @@ label {
     letter-spacing: 1px;
     text-indent: 20px;
     cursor: pointer;
-    transition: all 0.7s ease;
+    transition: all 0.2s ease;
     position: relative;
     padding: 5px;
     box-sizing: border-box;
@@ -63,7 +62,7 @@ label:before {
     border-radius: 100%;
     right: 20px;
     top: 30%;
-    transition: border 0.7s ease
+    transition: border 0.2s ease
 }
 
 
@@ -101,5 +100,7 @@ label:before {
 #lockedQuestions:checked ~ label[for=lockedQuestions]:before,
 #resultCountNode:checked ~ label[for=resultCountNode]:before,
 #solvedDifficultyCounts:checked ~ label[for=solvedDifficultyCounts]:before {
-    background: url("https://designmodo.github.io/Flat-UI/images/login/icon.png") no-repeat center center;
+    background: #1abc9c;
+
 }
+
