@@ -13,54 +13,57 @@
         <div id="container">
             <div>
                 <input id='serverCompletionStatus' type='checkbox' />
-                <label for='serverCompletionStatus'>
+                <label class="checkboxInputLabel" for='serverCompletionStatus'>
                     <h3>Completion Status <span></span></h3>
                 </label>
             </div>
             <div>
                 <input id='notesPanel' type='checkbox' />
-                <label for='notesPanel'>
+                <label class="checkboxInputLabel" for='notesPanel'>
                     <h3>Notes Panel <span></span></h3>
                 </label>
             </div>
-            <div id="notesPanelWidthDiv">
-                <label for='notesPanelWidth'>
-                    <h3>Notes Panel Width <span><input id='notesPanelWidth' type="range" min="0" max="99" step="1" /></span></h3>
+            <div id="notesPanelWidthDiv" class="range-slider">
+                <label for='notesPanelWidth' id="notesPanelWidthDivLabel">
+                    <h3>Notes Panel Width <span id="notesPanelWidthSliderSpan"><input id='notesPanelWidth'
+                                class="range-slider__range" type="range" min="0" max="100" value="100" step="1" />
+                            <span class="range-slider__value" id="rangeSliderValueSpan">0</span></span>
+                    </h3>
                 </label>
             </div>
             <div>
                 <input id='announcement' type='checkbox' />
-                <label for='announcement'>
+                <label class="checkboxInputLabel" for='announcement'>
                     <h3>Announcement <span></span></h3>
                 </label>
             </div>
             <div>
                 <input id='acceptanceRate' type='checkbox' />
-                <label for='acceptanceRate'>
+                <label class="checkboxInputLabel" for='acceptanceRate'>
                     <h3>Acceptance Rate <span></span></h3>
                 </label>
             </div>
             <div>
                 <input id='difficulty' type='checkbox' />
-                <label for='difficulty'>
+                <label class="checkboxInputLabel" for='difficulty'>
                     <h3>Difficulty <span></span></h3>
                 </label>
             </div>
             <div>
                 <input id='lockedQuestions' type='checkbox' />
-                <label for='lockedQuestions'>
+                <label class="checkboxInputLabel" for='lockedQuestions'>
                     <h3>Locked Questions <span></span></h3>
                 </label>
             </div>
             <div>
                 <input id='resultCountNode' type='checkbox' />
-                <label for='resultCountNode'>
+                <label class="checkboxInputLabel" for='resultCountNode'>
                     <h3>Result Count <span></span></h3>
                 </label>
             </div>
             <div>
                 <input id='solvedDifficultyCounts' type='checkbox' />
-                <label for='solvedDifficultyCounts'>
+                <label class="checkboxInputLabel" for='solvedDifficultyCounts'>
                     <h3>Solved Difficulty Counts <span></span></h3>
                 </label>
             </div>

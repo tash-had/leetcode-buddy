@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
         resultCountNode.checked = opts.resultCountNode;
         solvedDifficultyCounts.checked = opts.solvedDifficultyCounts;
 
-        toggleNotesWidth(opts.notesPanel);
+        toggleNotesWidth(opts.notesPanel, opts.notesPanelWidth);
         toggleDetailSpans(opts);
     });
 
@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
             solvedDifficultyCounts: solvedDifficultyCounts.checked
         };
 
-        toggleNotesWidth(options.notesPanel);
+        toggleNotesWidth(options.notesPanel, options.notesPanelWidth);
         toggleDetailSpans(options);
 
         chrome.tabs.getSelected(null, function (tab) {
@@ -99,10 +99,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-function toggleNotesWidth(notesPanelEnabled) {
+function toggleNotesWidth(notesPanelEnabled, widthValue) {
     var notesPanelWidthDiv = document.getElementById("notesPanelWidthDiv");
     if (notesPanelEnabled) {
         notesPanelWidthDiv.style = '';
+        var widthValueSpan = document.getElementById("rangeSliderValueSpan");
+        widthValueSpan.innerHTML = widthValue;
     } else {
         notesPanelWidthDiv.style = 'display:none;';
     }

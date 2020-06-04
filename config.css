@@ -52,7 +52,9 @@ label h3 span {
     color: #bdc3c7;
 }
 
-label:before {
+/* using .checkboxInputLabel to capture all except notesPanelWidth slider 
+(don't wanna make a circle beside it since its not a checkbox) */
+.checkboxInputLabel:before {
     content: "";
     width: 20px;
     height: 20px;
@@ -104,16 +106,15 @@ label:before {
 
 }
 
+#notesPanelWidth {
+    direction: rtl
+}
+
 /* RANGE SLIDER */ 
-*, *:before, *:after {
-    box-sizing: border-box;
+#notesPanelWidthSliderSpan {
+    padding-top: 5%;
 }
-.range-slider {
-    margin: 60px 0 0 0%;
-}
-.range-slider {
-    width: 100%;
-}
+
 .range-slider__range {
     -webkit-appearance: none;
     width: calc(100% - (73px));
@@ -158,25 +159,13 @@ label:before {
     box-shadow: 0 0 0 3px #fff, 0 0 0 6px #1abc9c;
 }
 .range-slider__value {
-    display: inline-block;
-    position: relative;
-    width: 60px;
-    color: #fff;
-    line-height: 20px;
-    text-align: center;
-    border-radius: 3px;
-    background: #2c3e50;
-    padding: 5px 10px;
-    margin-left: 8px;
-}
-.range-slider__value:after {
+    content: "";
+    width: 20px;
+    float:right;
     position: absolute;
-    top: 8px;
-    left: -7px;
-    width: 0;
-    height: 0;
-    border-top: 7px solid transparent;
-    border-right: 7px solid #2c3e50;
-    border-bottom: 7px solid transparent;
-    content: '';
+    right: 40px;
+    top: 40%;
+    color: #fff;
+    font-size: 1.1em;
+    font-family: sans-serif;
 }
