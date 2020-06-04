@@ -17,8 +17,8 @@
         }
 
         #container>div {
-            float: left;
             margin-bottom: 1em;
+            display: block;
         }
     </style>
     <script src="config.js"></script>
@@ -34,8 +34,9 @@
             <div>
                 Show Notes Panel: <input id="notesPanel" type="checkbox" />
             </div>
-            <div>
-                Notes Panel Width: <input id="notesPanelWidth" type="number"/>%
+            <div id="notesPanelWidthDiv">
+                Notes Panel Width: <input id="notesPanelWidth" type="number" min="0" max="99" step="1"/>%
+
             </div>
             <div>
                 Show Announcement: <input id="announcement" type="checkbox" />

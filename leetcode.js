@@ -326,7 +326,7 @@ function toggleNotesPanel(show) {
 function toggleNotesPanelWidth(newWidth) {
     var notesPanelDiv = document.getElementById("lcb_notesPanelId");
     if (notesPanelDiv != null) {
-        var newWidthStr = newWidth.toString() + "%;";
+        var newWidthStr = newWidth.toString() + "%;text-align:center;";
         notesPanelDiv.style = "width:" + newWidthStr;
     }
 }
@@ -452,7 +452,6 @@ function setObservers() {
         });
     }
 };
-
 
 document.addEventListener('DOMContentLoaded', function(e) {
     injectNotesPanelLibs();

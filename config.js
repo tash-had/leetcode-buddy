@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
         acceptanceRate = document.getElementById('acceptanceRate'),
         difficulty = document.getElementById('difficulty'),
         lockedQuestions = document.getElementById('lockedQuestions');
+    
 
     chrome.storage.sync.get('lc_buddy_config', (options) => {
         var opts = options['lc_buddy_config'];
@@ -36,6 +37,9 @@ document.addEventListener('DOMContentLoaded', () => {
         lockedQuestions.checked = opts.lockedQuestions;
         resultCountNode.checked = opts.resultCountNode;
         solvedDifficultyCounts.checked = opts.solvedDifficultyCounts;
+        
+        toggleNotesWidth(opts.notesPanel);
+
     });
 
     container.addEventListener('input', () => {
@@ -51,9 +55,20 @@ document.addEventListener('DOMContentLoaded', () => {
             solvedDifficultyCounts: solvedDifficultyCounts.checked
         };
 
+        toggleNotesWidth(options.notesPanel);
+
         chrome.tabs.getSelected(null, function(tab) {
             chrome.tabs.sendMessage(tab.id, options, null, null);
         });
         chrome.storage.sync.set({lc_buddy_config: options});
     });
 });
+
+function toggleNotesWidth(notesPanelEnabled) {
+    var notesPanelWidthDiv = document.getElementById("notesPanelWidthDiv");
+    if (notesPanelEnabled) {
+        notesPanelWidthDiv.style = '';
+    } else {
+        notesPanelWidthDiv.style = 'display:none;';
+    }
+}
