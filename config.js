@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
         solvedDifficultyCounts.checked = opts.solvedDifficultyCounts;
     });
 
-    container.addEventListener('change', () => {
+    container.addEventListener('input', () => {
         var options = {
             serverCompletionStatus: serverCompletionStatus.checked,
             notesPanel: notesPanel.checked,
