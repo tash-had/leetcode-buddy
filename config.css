@@ -1,0 +1,105 @@
+body {
+    background: #1abc9c;
+    font-family: sans-serif;
+}
+
+h1 {
+    color: #fff;
+    text-align: center;
+    font-size: 40px;
+    font-weight: 100;
+}
+
+/* #configDiv {
+    width: 300px;
+    height: 405px;
+    position: absolute;
+    top: 20%;
+    left: 0px;
+    right: 0px;
+    margin: 0px auto;
+} */
+
+input[type=checkbox] {
+    display: none;
+}
+
+label {
+    background: #34495E;
+    height: 69px;
+    width: 100%;
+    display: block;
+    border-bottom: 1px solid #2C3E50;
+    color: #fff;
+    text-transform: capitalize;
+    font-weight: 900;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-indent: 20px;
+    cursor: pointer;
+    transition: all 0.7s ease;
+    position: relative;
+    padding: 5px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
+
+label h3 span {
+    display: block;
+    font-size: 12px;
+    text-transform: capitalize;
+    font-weight: normal;
+    color: #bdc3c7;
+}
+
+label:before {
+    content: "";
+    width: 20px;
+    height: 20px;
+    background: #fff;
+    display: block;
+    position: absolute;
+    border-radius: 100%;
+    right: 20px;
+    top: 30%;
+    transition: border 0.7s ease
+}
+
+
+#serverCompletionStatus:checked ~ label[for=serverCompletionStatus],
+#notesPanel:checked ~ label[for=notesPanel],
+#announcement:checked ~ label[for=announcement],
+#acceptanceRate:checked ~ label[for=acceptanceRate],
+#difficulty:checked ~ label[for=difficulty],
+#lockedQuestions:checked ~ label[for=lockedQuestions],
+#resultCountNode:checked ~ label[for=resultCountNode],
+#solvedDifficultyCounts:checked ~ label[for=solvedDifficultyCounts] {
+    background: #2C3E50;
+    border-bottom: 1px solid #34495E;
+    color: #1ABC9C;
+}
+
+#serverCompletionStatus:checked ~ label[for=serverCompletionStatus] h3 span,
+#notesPanel:checked ~ label[for=notesPanel] h3 span,
+#announcement:checked ~ label[for=announcement] h3 span,
+#acceptanceRate:checked ~ label[for=acceptanceRate] h3 span,
+#difficulty:checked ~ label[for=difficulty] h3 span,
+#lockedQuestions:checked ~ label[for=lockedQuestions] h3 span,
+#resultCountNode:checked ~ label[for=resultCountNode] h3 span,
+#solvedDifficultyCounts:checked ~ label[for=solvedDifficultyCounts] h3 span {
+    color: #1ABC9C;
+}
+
+
+
+#serverCompletionStatus:checked ~ label[for=serverCompletionStatus]:before,
+#notesPanel:checked ~ label[for=notesPanel]:before,
+#announcement:checked ~ label[for=announcement]:before,
+#acceptanceRate:checked ~ label[for=acceptanceRate]:before,
+#difficulty:checked ~ label[for=difficulty]:before,
+#lockedQuestions:checked ~ label[for=lockedQuestions]:before,
+#resultCountNode:checked ~ label[for=resultCountNode]:before,
+#solvedDifficultyCounts:checked ~ label[for=solvedDifficultyCounts]:before {
+    background: url("https://designmodo.github.io/Flat-UI/images/login/icon.png") no-repeat center center;
+}
