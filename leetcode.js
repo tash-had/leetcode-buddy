@@ -303,7 +303,6 @@ function toggleNotesPanel(show) {
                     initNotesScript.id = "notesPanelScriptId";
                     document.body.appendChild(initNotesScript);
                     
-                    // typing causes a redraw so text doesnt show up... fix this
                     var noteBtn = getElementsByClassNamePrefix(document, "div", "note-btn")[0];
                     noteBtn.style = 'display:none;';
                     setObservers();
