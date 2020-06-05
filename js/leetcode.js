@@ -298,7 +298,7 @@ function toggleNotesPanel(show) {
 
                     var probEntry = p_store[probName];
                     var oldNotes = "";
-                    if ("notes" in probEntry) {
+                    if (probEntry && "notes" in probEntry) {
                         oldNotes = probEntry["notes"];
                     }
 
@@ -385,7 +385,8 @@ function injectNotesPanelLibs() {
         document.head.appendChild(quillCss);    
         
         var notifyJs = document.createElement("script");
-        notifyJs.src = chrome.runtime.getURL('notify.min.js');
+        notifyJs.id = "notifyJsScriptId";
+        notifyJs.src = chrome.runtime.getURL('js/notify.min.js');
         document.body.appendChild(notifyJs);
 
         var quilScript = document.createElement("script");
