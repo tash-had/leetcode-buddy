@@ -1,0 +1,93 @@
+
+body {
+    background: #ffc038;
+    font-family: sans-serif;
+    overflow-y: scroll; 
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none;
+}
+
+body::-webkit-scrollbar-track
+{
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    border-radius: 10px;
+    background-color: #F5F5F5;
+}
+
+body::-webkit-scrollbar
+{
+    width: 12px;
+    background-color: #F5F5F5;
+}
+
+body::-webkit-scrollbar-thumb
+{
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+    background-color: #34495E;
+}
+
+h1 {
+    color: #fff;
+    font-size: 30px;
+    font-weight: 100;
+    text-align: center;
+    display: none;
+}
+
+h2 {
+    color: #fff;
+    font-size: 20px;
+    font-weight: 100;
+    text-align: center;
+}
+
+.lcbContentContainer {
+    width: 300px;
+    height: 405px;
+    top: 20%;
+    left: 0px;
+    right: 0px;
+    margin: 15% auto;
+}
+
+.flat-button {
+    position: relative;
+    width: 250px;
+    height: 60px;
+    background: #34495E;
+    margin: 0 auto;
+    margin-top: 20px;
+    overflow: hidden;
+    z-index: 1;
+    cursor: pointer;
+    transition: color 0.3s;
+   /* Typo */
+    line-height: 60px;
+    text-align: center;
+    color: #fff;
+    font-size: 1.2em;
+}
+.flat-button:after {
+    position: absolute;
+    top: 90%;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #2C3E50;
+    content: "";
+    z-index: -2;
+    transition: transform 0.3s;
+}
+.flat-button:hover::after {
+    transform: translateY(-80%);
+    transition: transform 0.3s;
+}
+
+.topleft {
+    position: absolute;
+    top: 8px;
+    left: 16px;
+    font-size: 18px;
+    display: block;
+}

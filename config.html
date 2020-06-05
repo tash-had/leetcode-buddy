@@ -3,69 +3,80 @@
 
 <head>
     <title>LeetCode Buddy</title>
+    <link rel="stylesheet" href="css/popup.css">
     <link rel="stylesheet" href="css/config.css">
     <script src="js/config.js"></script>
 </head>
 
 <body>
-    <div id="configDiv">
-        <h2>Configuration</h2>
-        <div id="container">
-            <div>
-                <input id='serverCompletionStatus' type='checkbox' />
-                <label class="checkboxInputLabel" for='serverCompletionStatus'>
-                    <h3>Completion Status <span></span></h3>
-                </label>
+    <img class="topleft" src="img/icon.png" alt="LeetCode Buddy Logo" width="50" height="50">
+    <div class="lcbContentContainer">
+        <h1>LeetCode Buddy</h1>
+        <div id="notesDiv">
+            <h2>Notes</h2>
+            <div class='flat-button'>
+                My Notes
             </div>
-            <div>
-                <input id='notesPanel' type='checkbox' />
-                <label class="checkboxInputLabel" for='notesPanel'>
-                    <h3>Notes Panel <span></span></h3>
-                </label>
-            </div>
-            <div id="notesPanelWidthDiv" class="range-slider">
-                <label for='notesPanelWidth' id="notesPanelWidthDivLabel">
-                    <h3>Notes Panel Width <span id="notesPanelWidthSliderSpan"><input id='notesPanelWidth'
-                                class="range-slider__range" type="range" min="0" max="100" value="100" step="1" />
-                            <span class="range-slider__value" id="rangeSliderValueSpan">0</span></span>
-                    </h3>
-                </label>
-            </div>
-            <div>
-                <input id='announcement' type='checkbox' />
-                <label class="checkboxInputLabel" for='announcement'>
-                    <h3>Announcement <span></span></h3>
-                </label>
-            </div>
-            <div>
-                <input id='acceptanceRate' type='checkbox' />
-                <label class="checkboxInputLabel" for='acceptanceRate'>
-                    <h3>Acceptance Rate <span></span></h3>
-                </label>
-            </div>
-            <div>
-                <input id='difficulty' type='checkbox' />
-                <label class="checkboxInputLabel" for='difficulty'>
-                    <h3>Difficulty <span></span></h3>
-                </label>
-            </div>
-            <div>
-                <input id='lockedQuestions' type='checkbox' />
-                <label class="checkboxInputLabel" for='lockedQuestions'>
-                    <h3>Locked Questions <span></span></h3>
-                </label>
-            </div>
-            <div>
-                <input id='resultCountNode' type='checkbox' />
-                <label class="checkboxInputLabel" for='resultCountNode'>
-                    <h3>Result Count <span></span></h3>
-                </label>
-            </div>
-            <div>
-                <input id='solvedDifficultyCounts' type='checkbox' />
-                <label class="checkboxInputLabel" for='solvedDifficultyCounts'>
-                    <h3>Solved Difficulty Counts <span></span></h3>
-                </label>
+        </div>
+        <div id="configDiv">
+            <h2>Configuration</h2>
+            <div id="configControlPanel">
+                <div>
+                    <input id='serverCompletionStatus' type='checkbox' />
+                    <label class="checkboxInputLabel" for='serverCompletionStatus'>
+                        <h3>Completion Status <span></span></h3>
+                    </label>
+                </div>
+                <div>
+                    <input id='notesPanel' type='checkbox' />
+                    <label class="checkboxInputLabel" for='notesPanel'>
+                        <h3>Notes Panel <span></span></h3>
+                    </label>
+                </div>
+                <div id="notesPanelWidthDiv" class="range-slider">
+                    <label for='notesPanelWidth' id="notesPanelWidthDivLabel">
+                        <h3>Notes Panel Width <span id="notesPanelWidthSliderSpan"><input id='notesPanelWidth'
+                                    class="range-slider__range" type="range" min="0" max="100" value="100" step="1" />
+                                <span class="range-slider__value" id="rangeSliderValueSpan">0</span></span>
+                        </h3>
+                    </label>
+                </div>
+                <div>
+                    <input id='announcement' type='checkbox' />
+                    <label class="checkboxInputLabel" for='announcement'>
+                        <h3>Announcement <span></span></h3>
+                    </label>
+                </div>
+                <div>
+                    <input id='acceptanceRate' type='checkbox' />
+                    <label class="checkboxInputLabel" for='acceptanceRate'>
+                        <h3>Acceptance Rate <span></span></h3>
+                    </label>
+                </div>
+                <div>
+                    <input id='difficulty' type='checkbox' />
+                    <label class="checkboxInputLabel" for='difficulty'>
+                        <h3>Difficulty <span></span></h3>
+                    </label>
+                </div>
+                <div>
+                    <input id='lockedQuestions' type='checkbox' />
+                    <label class="checkboxInputLabel" for='lockedQuestions'>
+                        <h3>Locked Questions <span></span></h3>
+                    </label>
+                </div>
+                <div>
+                    <input id='resultCountNode' type='checkbox' />
+                    <label class="checkboxInputLabel" for='resultCountNode'>
+                        <h3>Result Count <span></span></h3>
+                    </label>
+                </div>
+                <div>
+                    <input id='solvedDifficultyCounts' type='checkbox' />
+                    <label class="checkboxInputLabel" for='solvedDifficultyCounts'>
+                        <h3>Solved Difficulty Counts <span></span></h3>
+                    </label>
+                </div>
             </div>
         </div>
     </div>

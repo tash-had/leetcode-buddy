@@ -34,7 +34,7 @@ var configEnableDisableLabels = {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    var container = document.getElementById('container'),
+    var configControlPanel = document.getElementById('configControlPanel'),
         serverCompletionStatus = document.getElementById('serverCompletionStatus'),
         notesPanel = document.getElementById('notesPanel'),
         notesPanelWidth = document.getElementById('notesPanelWidth'),
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
         toggleDetailSpans(opts);
     });
 
-    container.addEventListener('input', () => {
+    configControlPanel.addEventListener('input', () => {
         var options = {
             serverCompletionStatus: serverCompletionStatus.checked,
             notesPanel: notesPanel.checked,
@@ -118,12 +118,12 @@ function toggleDetailSpans(opts) {
             console.log("stage 1");
             var parentDiv = inputElem.parentElement;
             if (parentDiv) {
-            console.log("stage 2");
+                console.log("stage 2");
 
                 var detailSpan = parentDiv.querySelector("label>h3>span");
                 var isChecked = opts[optionKey];
                 if (detailSpan && (optionKey in configEnableDisableLabels)) {
-            console.log("stage 3");
+                    console.log("stage 3");
 
                     detailSpan.innerHTML = configEnableDisableLabels[optionKey][isChecked];
                 }

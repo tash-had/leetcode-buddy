@@ -39,6 +39,7 @@ function addDataToDom(dataId, data) {
     } else {
         existingDataDiv.innerHTML = data;
     }
+
     $.notify("Autosaved.", {
         position: "right bottom",
         className: "success",
@@ -52,11 +53,3 @@ window.onbeforeunload = function () {
         return 'Changes are autosaving. Are you sure you want to leave?';
     }
 }
-
-$(document).bind('keydown', function(e) {
-    if(e.ctrlKey && (e.which == 83)) {
-      e.preventDefault();
-      alert('Ctrl+S');
-      return false;
-    }
-  });
