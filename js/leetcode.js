@@ -21,7 +21,6 @@ function updateOptions(newOptions) {
     }
 
     if (options.notesPanel !== newOptions.notesPanel) {
-        console.log("NOTES PANEL?", newOptions.notesPanel);
         toggleNotesPanel(newOptions.notesPanel);
         options.notesPanel = newOptions.notesPanel;
     }
@@ -134,6 +133,8 @@ function checkForSubmission() {
                     correctSubmission = false;
                 }
                 saveProblemData("correctSubmission", correctSubmission);
+                var unix = Math.round(+new Date()/1000);
+                saveProblemData("latestSubmission", unix);
             }
         }
     }
@@ -265,10 +266,8 @@ function toggleSolvedDifficultyCounts(show) {
 };
 
 function removeNotesPanel() {
-    console.log("Removing");
     var notesPanelElm = document.getElementById("lcb_notesPanelId");
     if (notesPanelElm != null) {
-        console.log("rrr")
         notesPanelElm.parentNode.removeChild(notesPanelElm);
     }
     var notesPanelScript = document.getElementById("notesPanelScriptId");
@@ -279,7 +278,6 @@ function removeNotesPanel() {
 
 function toggleNotesPanel(show) {
     if (show) {
-        console.log("Recieved SHOW notes");
         var editorAreaArr = document.getElementsByClassName("react-codemirror2");
         var notesEditor = document.getElementById("lcb_notesPanelId");
         if (notesEditor != null) {
@@ -358,6 +356,7 @@ function saveProblemData(dataKey, dataVal) {
             cur_p_store[problemName] = {};
             cur_p_store[problemName][dataKey] = dataVal;
             cur_p_store[problemName]["problemNumber"] = problemNumber;
+            cur_p_store[problemName]["link"] = location.href;
         } else {
             // question has been submitted before
             cur_p_store[problemName][dataKey] = dataVal;
@@ -400,7 +399,6 @@ function onPageMutated() {
     var notesPanelData = document.getElementById("notesPanelData");
     if (notesPanelData == null) {
         toggleServerCompletionStatus(options.serverCompletionStatus);
-        console.log("NOTES PANEL FAM?", options.notesPanel);
         toggleNotesPanel(options.notesPanel);
         toggleNotesPanelWidth(options.notesPanelWidth);
         toggleAnnouncement(options.announcement);

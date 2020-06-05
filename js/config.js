@@ -112,19 +112,13 @@ function toggleNotesWidth(notesPanelEnabled, widthValue) {
 
 function toggleDetailSpans(opts) {
     for (var optionKey in opts) {
-        console.log("stage 0", optionKey);
         var inputElem = document.getElementById(optionKey);
         if (inputElem) {
-            console.log("stage 1");
             var parentDiv = inputElem.parentElement;
             if (parentDiv) {
-                console.log("stage 2");
-
                 var detailSpan = parentDiv.querySelector("label>h3>span");
                 var isChecked = opts[optionKey];
                 if (detailSpan && (optionKey in configEnableDisableLabels)) {
-                    console.log("stage 3");
-
                     detailSpan.innerHTML = configEnableDisableLabels[optionKey][isChecked];
                 }
             }
