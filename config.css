@@ -1,12 +1,41 @@
 body {
-    background: #1abc9c;
+    background: #F8A017;
     font-family: sans-serif;
+    overflow-y: scroll; 
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none;
 }
 
-h1 {
+
+/*
+ *  STYLE 1
+ */
+
+ body::-webkit-scrollbar-track
+ {
+     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+     border-radius: 10px;
+     background-color: #F5F5F5;
+ }
+ 
+ body::-webkit-scrollbar
+ {
+     width: 12px;
+     background-color: #F5F5F5;
+ }
+ 
+ body::-webkit-scrollbar-thumb
+ {
+     border-radius: 10px;
+     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+     background-color: #212121;
+ }
+
+
+h2 {
     color: #fff;
     text-align: center;
-    font-size: 40px;
+    font-size: 30px;
     font-weight: 100;
 }
 
@@ -24,7 +53,7 @@ input[type=checkbox] {
 }
 
 label {
-    background: #34495E;
+    background: #212121;
     height: 69px;
     width: 100%;
     display: block;
@@ -77,8 +106,8 @@ label h3 span {
 #resultCountNode:checked ~ label[for=resultCountNode],
 #solvedDifficultyCounts:checked ~ label[for=solvedDifficultyCounts] {
     background: #2C3E50;
-    border-bottom: 1px solid #34495E;
-    color: #1ABC9C;
+    border-bottom: 1px solid #212121;
+    color: #F8A017;
 }
 
 #serverCompletionStatus:checked ~ label[for=serverCompletionStatus] h3 span,
@@ -89,7 +118,7 @@ label h3 span {
 #lockedQuestions:checked ~ label[for=lockedQuestions] h3 span,
 #resultCountNode:checked ~ label[for=resultCountNode] h3 span,
 #solvedDifficultyCounts:checked ~ label[for=solvedDifficultyCounts] h3 span {
-    color: #1ABC9C;
+    color: #F8A017;
 }
 
 
@@ -102,7 +131,7 @@ label h3 span {
 #lockedQuestions:checked ~ label[for=lockedQuestions]:before,
 #resultCountNode:checked ~ label[for=resultCountNode]:before,
 #solvedDifficultyCounts:checked ~ label[for=solvedDifficultyCounts]:before {
-    background: #1abc9c;
+    background: #F8A017;
 
 }
 
@@ -130,33 +159,33 @@ label h3 span {
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background: #2c3e50;
+    background: #2c3e50 !important;
     cursor: pointer;
     transition: background 0.15s ease-in-out;
 }
 .range-slider__range::-webkit-slider-thumb:hover {
-    background: #1abc9c;
+    background: #F8A017 !important;
 }
 .range-slider__range:active::-webkit-slider-thumb {
-    background: #1abc9c;
+    background: #F8A017 !important;
 }
 .range-slider__range::-moz-range-thumb {
     width: 20px;
     height: 20px;
     border: 0;
     border-radius: 50%;
-    background: #2c3e50;
+    background: #2c3e50 !important;
     cursor: pointer;
     transition: background 0.15s ease-in-out;
 }
 .range-slider__range::-moz-range-thumb:hover {
-    background: #1abc9c;
+    background: #F8A017 !important;
 }
 .range-slider__range:active::-moz-range-thumb {
-    background: #1abc9c;
+    background: #F8A017 !important;
 }
 .range-slider__range:focus::-webkit-slider-thumb {
-    box-shadow: 0 0 0 3px #fff, 0 0 0 6px #1abc9c;
+    box-shadow: 0 0 0 3px #fff, 0 0 0 6px #F8A017 !important;
 }
 .range-slider__value {
     content: "";

@@ -48,7 +48,7 @@ function addDataToDom(dataId, data) {
 
 // Check for unsaved data
 window.onbeforeunload = function () {
-    if (change.length() > 0) {
+    if (change && change.length() > 0) {
         return 'Changes are autosaving. Are you sure you want to leave?';
     }
 }
