@@ -1,17 +1,17 @@
 {
-    "name": "LeetCode Customiser",
-    "description": "This extension enables for parts of the LeetCode website to be customised.",
-    "version": "0.2",
+    "name": "LeetCode Buddy",
+    "description": "An extension that makes you more productive while you LeetCode.",
+    "version": "1.0",
 
-    "author": "Thomas Punt",
+    "author": "Tash-had Saqif",
 
-    "manifest_version": 2,
+    "manifest_version": 1,
 
     "content_scripts": [
         {
             "matches": ["https://leetcode.com/*"],
-            "css": ["leetcode.css"],
-            "js": ["common.js", "leetcode.js"],
+            "css": ["css/leetcode.css"],
+            "js": ["js/common.js", "js/leetcode.js"],
             "run_at": "document_start",
             "all_frames": true
         }
@@ -29,7 +29,7 @@
     },
 
     "web_accessible_resources": [
-        "notes.js",
-        "notify.min.js"
+        "js/notes.js",
+        "js/notify.min.js"
     ]
 }

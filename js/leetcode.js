@@ -389,7 +389,7 @@ function injectNotesPanelLibs() {
         document.body.appendChild(notifyJs);
 
         var quilScript = document.createElement("script");
-        quilScript.src = chrome.runtime.getURL('notes.js');
+        quilScript.src = chrome.runtime.getURL('js/notes.js');
         document.body.appendChild(quilScript);
     }
 }
