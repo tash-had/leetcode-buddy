@@ -67,6 +67,6 @@ p > br:first-child {
 	display: none;
 }
 
-.pageHeading {
+.pageHeading, p{
 	color: #34495E;
 }
