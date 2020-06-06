@@ -21,7 +21,6 @@ function updateOptions(newOptions) {
     }
 
     if (options.notesPanel !== newOptions.notesPanel) {
-        console.log("its", newOptions.notesPanel);
         toggleNotesPanel(newOptions.notesPanel, newOptions);
         options.notesPanel = newOptions.notesPanel;
     }
@@ -284,9 +283,7 @@ function removeNotesPanel() {
 }
 
 function toggleNotesPanel(show) {
-    console.log("togg");
     if (show === undefined || show == true) {
-        console.log("rec'v notes panel show");
         var editorAreaArr = document.getElementsByClassName("react-codemirror2");
         var notesEditor = document.getElementById("lcb_notesPanelId");
         if (notesEditor != null) {
@@ -408,7 +405,6 @@ function onPageMutated() {
     var notesPanelData = document.getElementById("notesPanelData");
     if (notesPanelData == null) {
         toggleServerCompletionStatus(options.serverCompletionStatus);
-        console.log("onPageMutated", options.notesPanel, options);
         toggleNotesPanel(options.notesPanel);
         toggleNotesPanelWidth(options.notesPanelWidth);
         toggleDifficulty(options.difficulty);

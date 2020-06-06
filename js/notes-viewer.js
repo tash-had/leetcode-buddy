@@ -4,7 +4,6 @@ $(document).foundation();
 var p_store = null;
 
 function injectNotesToDom(problemData) {
-	console.log("injectin");
 	for (problem in problemData) {
 		var problemObj = problemData[problem];
 		if ("notes" in problemObj) {
@@ -15,7 +14,6 @@ function injectNotesToDom(problemData) {
 }
 
 function addNoteItemToPage(noteTitle, problemData) {
-	console.log("hey-ya");
 	var noteData = problemData["notes"];
 	var notesHolder = document.getElementById("allNotesDiv");
 
@@ -66,7 +64,6 @@ function addNoteToNotesMenu(noteTitle, noteId) {
 
 document.addEventListener('DOMContentLoaded', () => {
 	var p_store = {};
-	console.log('hi-ya');
 	chrome.storage.sync.get('lc_buddy_p_store', (store) => {
 		if (store['lc_buddy_p_store'] === undefined) {
 			chrome.storage.sync.set({
@@ -75,7 +72,6 @@ document.addEventListener('DOMContentLoaded', () => {
 		} else {
 			p_store = store['lc_buddy_p_store'];
 		}
-		console.log(p_store);
 		injectNotesToDom(p_store);
 	});
 })
