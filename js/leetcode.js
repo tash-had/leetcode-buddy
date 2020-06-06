@@ -377,7 +377,7 @@ function saveProblemData(dataKey, dataVal) {
 function injectNotesPanelLibs() {
     if (isAppScreen()) {
         var jquery = document.createElement("script");
-        jquery.src = "https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js";
+        jquery.src = chrome.runtime.getURL('js/libs/jquery.1.8.3.min.js');
         document.body.appendChild(jquery);
     
         var quillJs = document.createElement("script");
@@ -387,8 +387,8 @@ function injectNotesPanelLibs() {
         var quillCss = document.createElement("link");
         quillCss.rel = "stylesheet";
         quillCss.href = "https://cdn.quilljs.com/1.3.6/quill.snow.css";
-        document.head.appendChild(quillCss);    
-        
+        document.head.appendChild(quillCss);
+
         var notifyJs = document.createElement("script");
         notifyJs.id = "notifyJsScriptId";
         notifyJs.src = chrome.runtime.getURL('js/libs/notify.min.js');
