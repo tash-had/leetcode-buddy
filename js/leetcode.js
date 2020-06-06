@@ -100,7 +100,7 @@ function toggleServerCompletionStatus(show) {
             for (var i = 0; i < completionChecks.length; i++) {
                 var problemNameParts = problemNamesList[i].textContent.split(".");
                 var bareProblemName = problemNameParts[problemNameParts.length - 1].trim();
-                if (!(bareProblemName in p_store) || !(p_store[bareProblemName]["correctSubmission"])) {
+                if (!(bareProblemName in p_store) || !(p_store[bareProblemName]["submissionData"]["correctSubmission"])) {
                     completionChecks[i].style = 'opacity: 0;';
                 } else {
                     completionChecks[i].style = '';
@@ -132,9 +132,13 @@ function checkForSubmission() {
                     // incorrect submission
                     correctSubmission = false;
                 }
-                saveProblemData("correctSubmission", correctSubmission);
-                var unix = Math.round(+new Date()/1000);
-                saveProblemData("latestSubmission", unix);
+                var unixTimestamp = Math.round(+new Date()/1000);
+
+                var submissionData = {
+                    "correctSubmission": correctSubmission,
+                    "submissionTime": unixTimestamp
+                }
+                saveProblemData("submissionData", submissionData);
             }
         }
     }
@@ -297,7 +301,7 @@ function toggleNotesPanel(show) {
                     var probEntry = p_store[probName];
                     var oldNotes = "";
                     if (probEntry && "notes" in probEntry) {
-                        oldNotes = probEntry["notes"];
+                        oldNotes = probEntry["notes"]["content"];
                     }
 
                     var notesArea = document.createElement("div");
@@ -385,7 +389,7 @@ function injectNotesPanelLibs() {
         
         var notifyJs = document.createElement("script");
         notifyJs.id = "notifyJsScriptId";
-        notifyJs.src = chrome.runtime.getURL('js/notify.min.js');
+        notifyJs.src = chrome.runtime.getURL('js/libs/notify.min.js');
         document.body.appendChild(notifyJs);
 
         var quilScript = document.createElement("script");
@@ -408,10 +412,20 @@ function onPageMutated() {
         toggleSolvedDifficultyCounts(options.solvedDifficultyCounts);
         checkForSubmission();
     } else {
-        var notesData = notesPanelData.innerHTML;
+        var notesData = {
+            "content": notesPanelData.innerHTML,
+            "lastEdit": getFullDateAndTimeStr()
+        };
         notesPanelData.parentNode.removeChild(notesPanelData);
         saveProblemData("notes", notesData);
     }
+}
+
+function getFullDateAndTimeStr() {
+    var today = new Date();
+    var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+    var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+    return date+' '+time;
 }
 
 function setObservers() {

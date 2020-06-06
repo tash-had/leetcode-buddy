@@ -1,3 +1,41 @@
-body {
-    font-family: sans-serif;
+@import url(https://fonts.googleapis.com/css?family=Lato:700,400);
+body{
+	font-family: 'Lato', sans-serif;
+}
+#topBar, .menu{
+	background-color: white !important;
+}
+.pageTitleHead{
+	font-family: 'Lato', sans-serif;	
+	font-weight: lighter;
+}
+#titleHead{
+	background-image: url(../img/desk.jpg);
+	background-repeat:no-repeat;
+	background-position:center center;
+	background-attachment:fixed;
+	background-color: transparent;
+	-webkit-background-size:cover;
+	-moz-background-size:cover;
+	-o-background-size:cover;
+	background-size:cover contain;
+}
+a:hover{
+	color: #0D47A1;
+}
+
+#mainMenu{
+	padding-left: 10px;
+}
+
+h4 > small {
+	font-size: 0.7em;
+	cursor: default;
+}
+
+p{
+	text-indent: 20px;
+}
+h5{
+	font-size: 1.1em;
 }

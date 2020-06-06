@@ -30,11 +30,11 @@
     "browser_action": {    
         "default_title" : "LeetCode Buddy",
         "default_icon" : "img/icon-disabled.png",
-        "default_popup": "config.html"
+        "default_popup": "html/config.html"
     },
 
     "web_accessible_resources": [
         "js/notes.js",
-        "js/notify.min.js"
+        "js/libs/notify.min.js"
     ]
 }

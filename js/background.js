@@ -16,10 +16,10 @@ chrome.tabs.onUpdated.addListener(function (tabId, change, tab) {
 
 function setPoputState(tabId, tabUrl) {
     if (isValidPage(tabUrl)) {
-        chrome.browserAction.setPopup({ tabId: tabId, popup: 'config.html' });
+        chrome.browserAction.setPopup({ tabId: tabId, popup: 'html/config.html' });
         chrome.browserAction.setIcon({ tabId: tabId, path: 'img/icon.png' });
     } else {
-        chrome.browserAction.setPopup({ tabId: tabId, popup: 'invalid-webpage.html' });
+        chrome.browserAction.setPopup({ tabId: tabId, popup: 'html/invalid-webpage.html' });
         chrome.browserAction.setIcon({ path: 'img/icon-disabled.png', tabId: tabId });
     }
 }
