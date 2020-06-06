@@ -39,3 +39,7 @@ p{
 h5{
 	font-size: 1.1em;
 }
+
+p > br:first-child {
+	display: none;
+}

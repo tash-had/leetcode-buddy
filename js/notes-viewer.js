@@ -11,6 +11,7 @@ function injectNotesToDom(problemData) {
 			addNoteItemToPage(problem, problemObj);
 		}
 	}
+	shortenLongNotes();
 }
 
 function addNoteItemToPage(noteTitle, problemData) {
@@ -18,7 +19,7 @@ function addNoteItemToPage(noteTitle, problemData) {
 	var noteData = problemData["notes"];
 	var notesHolder = document.getElementById("allNotesDiv");
 
-	var noteId = noteTitle.replace(/\s/g, '');
+	var noteId = "q" + problemData.problemNumber.toString();
 
 	// create full container that will hold note
 	var noteContainer = document.createElement("div");
@@ -41,6 +42,7 @@ function addNoteItemToPage(noteTitle, problemData) {
 	var noteBody = document.createElement("p");
 	noteBody.className = "noteContent";
 	noteBody.innerHTML = noteData.content;
+	// noteBody.innerHTML = noteBody.textContent;
 	noteContainer.appendChild(noteBody);
 
 	// add to page
@@ -78,10 +80,11 @@ document.addEventListener('DOMContentLoaded', () => {
 	});
 })
 
-$(document).ready(function () {
-	$('noteContainer').readmore({
+function shortenLongNotes() {
+	$('.noteContent').readmore({
 		speed: 75,
 		moreLink: '<a href="#">Read More</a><br>',
 		lessLink: '<a href="#">Read Less</a>'
 	});
-});
+}
+// $(document).ready();
