@@ -100,7 +100,9 @@ function toggleServerCompletionStatus(show) {
             for (var i = 0; i < completionChecks.length; i++) {
                 var problemNameParts = problemNamesList[i].textContent.split(".");
                 var bareProblemName = problemNameParts[problemNameParts.length - 1].trim();
-                if (!(bareProblemName in p_store) || !(p_store[bareProblemName]["submissionData"]["correctSubmission"])) {
+                if (!(bareProblemName in p_store) || 
+                !(p_store[bareProblemName]["submissionData"]) || 
+                    !(p_store[bareProblemName]["submissionData"]["correctSubmission"]) ) {
                     completionChecks[i].style = 'opacity: 0;';
                 } else {
                     completionChecks[i].style = '';
@@ -405,6 +407,7 @@ function onPageMutated() {
         toggleServerCompletionStatus(options.serverCompletionStatus);
         toggleNotesPanel(options.notesPanel);
         toggleNotesPanelWidth(options.notesPanelWidth);
+        toggleDifficulty(options.difficulty);
         toggleAnnouncement(options.announcement);
         toggleAcceptanceRate(options.acceptanceRate);
         toggleLockedQuestions(options.lockedQuestions);
