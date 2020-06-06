@@ -60,6 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 solvedDifficultyCounts: false
             };
             chrome.storage.sync.set({ lc_buddy_config: opts });
+            toggleDetailSpans(opts);
         }
 
         serverCompletionStatus.checked = opts.serverCompletionStatus;
