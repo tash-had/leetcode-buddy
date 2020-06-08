@@ -2,7 +2,7 @@
 
 ## Features
 - Write notes while doing problems
-- Browse through all your notes on a sepearte page
+- Browse through all your notes on a separate page
 - Show/Hide
   - Completion Status
   - Acceptance Rate
