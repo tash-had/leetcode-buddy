@@ -28,3 +28,6 @@
 
 ## Credits
 Icons made by [Freepik](https://www.flaticon.com/authors/freepik "Freepik") from [www.flaticon.com](https://www.flaticon.com/ "Flaticon")
+
+## Contact
+If you'd like to provide any feedback, my e-mail is on my GitHub profile. You can also use the contact form on [my website](https://tash-had.com/#contact). 
