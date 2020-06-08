@@ -1,5 +1,17 @@
 # LeetCode Buddy
 
+## Features
+- Write notes while doing problems
+- Browse through all your notes on a sepearte page
+- Show/Hide
+  - Completion Status
+  - Acceptance Rate
+  - Difficulty
+  - Locked Questions
+  - Announcements 
+  - Problem Search Result Count 
+  - Solved Problem Difficulty Counts
+ 
 ## Screenshots
 ![screenshot](release/screenshots/final/notes.png "take notes screenshot")
 
