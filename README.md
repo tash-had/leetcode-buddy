@@ -1,8 +1,15 @@
 # LeetCode Buddy
 
 ### Screenshots
-![Alt text](/relative/path/to/img.jpg?raw=true "Optional Title")
- 
+![screenshot](release/screenshots/final/notes.png "take notes screenshot")
+
+![screenshot](release/screenshots/final/comp_status.png "hide completion status screenshot")
+
+![screenshot](release/screenshots/final/difficulty.png "hide difficulty screenshot")
+
+![screenshot](release/screenshots/final/customize.png "customize screenshot")
+
+![screenshot](release/screenshots/final/browse_notes.png "browse notes screenshot")
 
 ### License 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
