@@ -1,5 +1,7 @@
 # LeetCode Buddy
 
+### [Link](https://chrome.google.com/webstore/detail/leetcode-buddy/daeplkffffccbejlgacmhpebchpjbfjg)
+
 ## Features
 - Write notes while doing problems
 - Browse through all your notes on a separate page
