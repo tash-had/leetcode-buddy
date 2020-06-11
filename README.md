@@ -1,5 +1,7 @@
 # LeetCode Buddy
 
+### [Webstore Link](https://chrome.google.com/webstore/detail/leetcode-buddy/daeplkffffccbejlgacmhpebchpjbfjg) | [Landing Page Link](https://tash-had.github.io/leetcode-buddy/)
+
 ## Features
 - Write notes while doing problems
 - Browse through all your notes on a separate page
