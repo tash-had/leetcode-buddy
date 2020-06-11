@@ -317,8 +317,10 @@ function toggleNotesPanel(show) {
                     initNotesScript.id = "notesPanelScriptId";
                     document.body.appendChild(initNotesScript);
                     
-                    var noteBtn = getElementsByClassNamePrefix(document, "div", "note-btn")[0];
-                    noteBtn.style = 'display:none;';
+                    var noteBtn = getElementsByClassNamePrefix(document, "div", "note-btn");
+                    if (noteBtn) {
+                        noteBtn.style = 'display:none;';
+                    }
                     setObservers();
                 }
             }
@@ -393,7 +395,6 @@ function injectNotesPanelLibs() {
         notifyJs.id = "notifyJsScriptId";
         notifyJs.src = chrome.runtime.getURL('js/libs/notify.min.js');
         document.body.appendChild(notifyJs);
-
         var quilScript = document.createElement("script");
         quilScript.src = chrome.runtime.getURL('js/notes.js');
         document.body.appendChild(quilScript);
