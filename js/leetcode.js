@@ -317,8 +317,9 @@ function toggleNotesPanel(show) {
                     initNotesScript.id = "notesPanelScriptId";
                     document.body.appendChild(initNotesScript);
                     
-                    var noteBtn = getElementsByClassNamePrefix(document, "div", "note-btn");
-                    if (noteBtn) {
+                    var noteBtnArr = getElementsByClassNamePrefix(document, "div", "note-btn");
+                    if (noteBtnArr && noteBtnArr.length > 0) {
+                        var noteBtn = noteBtnArr[0]
                         noteBtn.style = 'display:none;';
                     }
                     setObservers();
