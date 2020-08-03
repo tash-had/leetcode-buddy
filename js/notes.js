@@ -15,19 +15,32 @@ function initializeNotesEditor() {
         change = change.compose(delta);
     });
 
-    // Save periodically
-    setInterval(function () {
-        if (change.length() > 0) {
-            var myEditor = document.querySelector('#editor')
-            var textAsHTML = myEditor.children[0].innerHTML
-            addDataToDom("notesPanelData", textAsHTML);
-
-            change = new Delta();
-        }
+   // Save periodically
+    setInterval(function(){
+        saveNotes();
+        change = new Delta();
     }, 5 * 1000);
+
+    $(document.getElementById("editor")).bind('keydown', function(e) {
+        if(e.ctrlKey && (e.which == 83)) {
+          e.preventDefault();
+          saveNotes(true);
+          change = new Delta();
+          return false;
+        }
+      });
 }
 
-function addDataToDom(dataId, data) {
+function saveNotes(force) {
+    if (change.length() > 0 || force === true) {
+        var myEditor = document.querySelector('#editor')
+        var textAsHTML = myEditor.children[0].innerHTML
+        triggerDataTransfer("notesPanelData", textAsHTML);
+    }
+}
+
+function triggerDataTransfer(dataId, data) {
+    // a hack to send data back to extension script using leetcode DOM
     var existingDataDiv = document.getElementById(dataId);
     if (existingDataDiv == null) {
         var dataDiv = document.createElement("div");
@@ -40,7 +53,7 @@ function addDataToDom(dataId, data) {
         existingDataDiv.innerHTML = data;
     }
 
-    $.notify("Autosaved.", {
+    $.notify("Saved.", {
         position: "right bottom",
         className: "success",
         autoHideDelay: 2500
@@ -49,7 +62,5 @@ function addDataToDom(dataId, data) {
 
 
 window.onbeforeunload = function () {
-    if (change && change.length() > 0) {
-        return 'Changes are autosaving. Are you sure you want to leave?';
-    }
+    saveNotes();
 }
