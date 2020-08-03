@@ -23,7 +23,7 @@ function initializeNotesEditor() {
 
     // set ctrl + s save shortcut within editor
     $(document.getElementById("editor")).bind('keydown', function(e) {
-        if(e.ctrlKey && (e.which == 83)) {
+        if(e.keyCode == 83 && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)) {
           e.preventDefault();
           saveNotes(true);
           change = new Delta();

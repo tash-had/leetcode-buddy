@@ -384,18 +384,19 @@ function injectNotesPanelLibs() {
         document.body.appendChild(jquery);
     
         var quillJs = document.createElement("script");
-        quillJs.src = "https://cdn.quilljs.com/1.3.6/quill.js";
+        quillJs.src = chrome.runtime.getURL('js/libs/quill.min.js');
         document.body.appendChild(quillJs);
     
         var quillCss = document.createElement("link");
         quillCss.rel = "stylesheet";
-        quillCss.href = "https://cdn.quilljs.com/1.3.6/quill.snow.css";
+        quillCss.href = chrome.runtime.getURL('css/libs/quill.snow.min.css');
         document.head.appendChild(quillCss);
 
         var notifyJs = document.createElement("script");
         notifyJs.id = "notifyJsScriptId";
         notifyJs.src = chrome.runtime.getURL('js/libs/notify.min.js');
         document.body.appendChild(notifyJs);
+        
         var quilScript = document.createElement("script");
         quilScript.src = chrome.runtime.getURL('js/notes.js');
         document.body.appendChild(quilScript);

@@ -38,8 +38,10 @@
     },
 
     "web_accessible_resources": [
-        "js/notes.js",
+        "js/libs/jquery.1.8.3.min.js",
         "js/libs/notify.min.js",
-        "js/libs/jquery.1.8.3.min.js"
+        "js/libs/quill.min.js",
+        "css/libs/quill.snow.min.css",
+        "js/notes.js"
     ]
 }
