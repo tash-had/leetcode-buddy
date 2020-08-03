@@ -338,7 +338,7 @@ function toggleNotesPanel(show) {
 
 function toggleNotesPanelWidth(newWidth) {
     var notesPanelDiv = document.getElementById("lcb_notesPanelId");
-    if (notesPanelDiv != null) {
+    if (notesPanelDiv != null && newWidth != undefined && newWidth != null) {
         var newWidthStr = newWidth.toString() + "%;text-align:center;";
         notesPanelDiv.style = "width:" + newWidthStr;
     }
