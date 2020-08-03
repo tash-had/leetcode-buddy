@@ -21,6 +21,7 @@ function initializeNotesEditor() {
         change = new Delta();
     }, 5 * 1000);
 
+    // set ctrl + s save shortcut within editor
     $(document.getElementById("editor")).bind('keydown', function(e) {
         if(e.ctrlKey && (e.which == 83)) {
           e.preventDefault();
