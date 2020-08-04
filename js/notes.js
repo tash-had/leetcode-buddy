@@ -3,13 +3,6 @@ var change;
 function initializeNotesEditor() {
     var Delta = Quill.import('delta');
 
-    var notesArea = document.getElementById("lcb_notesPanelId");
-    if (!notesArea) {
-        notesArea = document.createElement("div");
-        notesArea.innerHTML = "<div id='editor'></div>";
-        document.body.appendChild(notesArea);
-    }
-
     var quill = new Quill('#editor', {
         modules: {
             toolbar: true
@@ -75,5 +68,10 @@ window.onbeforeunload = function () {
 }
 
 window.onload = function () {
-    initializeNotesEditor();
+    var notesArea = document.getElementById("lcb_notesPanelId");
+    var initScript = document.getElementById("notesPanelInitScriptId");
+    // make sure notes area has been created before we initialize
+    if (notesArea && !initScript) {
+        initializeNotesEditor();
+    }
 }

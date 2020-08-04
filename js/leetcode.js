@@ -271,15 +271,29 @@ function toggleSolvedDifficultyCounts(show) {
     }
 };
 
-function removeNotesPanel() {
-    var notesPanelElm = document.getElementById("lcb_notesPanelId");
-    if (notesPanelElm != null) {
-        notesPanelElm.parentNode.removeChild(notesPanelElm);
-    }
-    var notesPanelScript = document.getElementById("notesPanelScriptId");
-    if (notesPanelScript != null) {
-        notesPanelScript.parentNode.removeChild(notesPanelScript);
-    }
+function removeNotesPanel(removeAllScripts) {
+    return new Promise(function(resolve, reject) {
+        var notesPanelElm = document.getElementById("lcb_notesPanelId");
+        var notesPanelInitScript = document.getElementById("notesPanelInitScriptId");
+
+        if (notesPanelElm) {
+            notesPanelElm.parentNode.removeChild(notesPanelElm);
+        }
+        
+        if (notesPanelInitScript) {
+            notesPanelInitScript.parentNode.removeChild(notesPanelInitScript);
+        }
+
+        if (removeAllScripts) {
+            var notesPanelScript = document.getElementById("notesPanelScriptId");
+
+            if (notesPanelScript) {
+                notesPanelScript.parentNode.removeChild(notesPanelScript);
+            }
+        }
+
+        resolve();
+    })
 }
 
 function toggleNotesPanel(show) {
@@ -305,18 +319,21 @@ function toggleNotesPanel(show) {
                     if (probEntry && "notes" in probEntry) {
                         oldNotes = probEntry["notes"]["content"];
                     }
-
+                    
                     var notesArea = document.createElement("div");
                     notesArea.innerHTML = "<div id='editor'>" + oldNotes + "</div>";
                     notesArea.style = "width:30%;text-align:center;";
                     notesArea.id = "lcb_notesPanelId";
                     editorAreaParent.appendChild(notesArea);
                     
-                    // var initNotesScript = document.createElement("script");
-                    // initNotesScript.innerHTML = "initializeNotesEditor();";
-                    // initNotesScript.id = "notesPanelScriptId";
-                    // document.body.appendChild(initNotesScript);
-                    
+                    if (document.getElementById("notesPanelScriptId")) {
+                        // script was loaded before editor space was created. call initialize again.
+                        var initNotesScript = document.createElement("script");
+                        initNotesScript.innerHTML = "initializeNotesEditor();";
+                        initNotesScript.id = "notesPanelInitScriptId";
+                        document.body.appendChild(initNotesScript);
+                    }
+
                     var noteBtnArr = getElementsByClassNamePrefix(document, "div", "note-btn");
                     if (noteBtnArr && noteBtnArr.length > 0) {
                         var noteBtn = noteBtnArr[0]
@@ -327,7 +344,7 @@ function toggleNotesPanel(show) {
             }
         }
     } else {
-        removeNotesPanel();
+        removeNotesPanel(true);
         // show leetcode built in notes btn
         var noteBtn = getElementsByClassNamePrefix(document, "div", "note-btn");
         if (noteBtn && noteBtn.length > 0) {
@@ -399,8 +416,9 @@ function injectNotesPanelLibs() {
         injectJs(document, requiredScriptsSequential[0], function(){
             injectJs(document, requiredScriptsSequential[1], function() {
                 injectJs(document, requiredScriptsSequential[2], function() {
-                    toggleNotesPanel(true);
-                    injectJs(document, requiredScriptsSequential[3], undefined, "notesPanelScriptId")
+                    injectJs(document, requiredScriptsSequential[3], function() {
+                        toggleNotesPanel(true);
+                    }, "notesPanelScriptId")
                 })
             })
         })
