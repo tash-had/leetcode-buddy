@@ -271,7 +271,7 @@ function toggleSolvedDifficultyCounts(show) {
     }
 };
 
-function removeNotesPanel(removeAllScripts) {
+function removeNotesPanel() {
     return new Promise(function(resolve, reject) {
         var notesPanelElm = document.getElementById("lcb_notesPanelId");
         var notesPanelInitScript = document.getElementById("notesPanelInitScriptId");
@@ -284,14 +284,6 @@ function removeNotesPanel(removeAllScripts) {
             notesPanelInitScript.parentNode.removeChild(notesPanelInitScript);
         }
 
-        if (removeAllScripts) {
-            var notesPanelScript = document.getElementById("notesPanelScriptId");
-
-            if (notesPanelScript) {
-                notesPanelScript.parentNode.removeChild(notesPanelScript);
-            }
-        }
-
         resolve();
     })
 }
@@ -300,6 +292,7 @@ function toggleNotesPanel(show) {
     if (show === undefined || show == true) {
         var editorAreaArr = document.getElementsByClassName("react-codemirror2");
         var notesEditor = document.getElementById("lcb_notesPanelId");
+        
         if (notesEditor != null) {
             // deal with a glitch where javascript puts two headers for the notes editor
             if (notesEditor.children.length > 2) {
@@ -346,7 +339,7 @@ function toggleNotesPanel(show) {
             }
         }
     } else {
-        removeNotesPanel(true);
+        removeNotesPanel();
         // show leetcode built in notes btn
         var noteBtn = getElementsByClassNamePrefix(document, "div", "note-btn");
         if (noteBtn && noteBtn.length > 0) {
@@ -401,8 +394,10 @@ function injectNotesPanelLibs() {
         script = dom.createElement('script');
         script.type = 'text/javascript';
         script.async = true;
-        script.id = id;
-        script.onload = callback;
+        script.onload = function() {
+            script.id = id;
+            callback();
+        }
         script.src = scriptUrl;
         dom.getElementsByTagName('head')[0].appendChild(script);
     }
