@@ -1,11 +1,11 @@
 {
     "name": "LeetCode Buddy",
     "description": "An extension that makes you more productive while you LeetCode.",
-    "version": "1.1",
+    "version": "1.2",
 
     "author": "Tash-had Saqif",
 
-    "manifest_version": 2,
+    "manifest_version": 3,
 
     "content_scripts": [
         {
