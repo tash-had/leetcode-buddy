@@ -312,10 +312,10 @@ function toggleNotesPanel(show) {
                     notesArea.id = "lcb_notesPanelId";
                     editorAreaParent.appendChild(notesArea);
                     
-                    var initNotesScript = document.createElement("script");
-                    initNotesScript.innerHTML = "initializeNotesEditor();";
-                    initNotesScript.id = "notesPanelScriptId";
-                    document.body.appendChild(initNotesScript);
+                    // var initNotesScript = document.createElement("script");
+                    // initNotesScript.innerHTML = "initializeNotesEditor();";
+                    // initNotesScript.id = "notesPanelScriptId";
+                    // document.body.appendChild(initNotesScript);
                     
                     var noteBtnArr = getElementsByClassNamePrefix(document, "div", "note-btn");
                     if (noteBtnArr && noteBtnArr.length > 0) {
@@ -378,28 +378,57 @@ function saveProblemData(dataKey, dataVal) {
 }
 
 function injectNotesPanelLibs() {
+    function injectJs(dom, scriptUrl, callback, id, script) {
+        script = dom.createElement('script');
+        script.type = 'text/javascript';
+        script.async = true;
+        script.id = id;
+        script.onload = callback;
+        script.src = scriptUrl;
+        dom.getElementsByTagName('head')[0].appendChild(script);
+    }
+
     if (isAppScreen()) {
-        var jquery = document.createElement("script");
-        jquery.src = chrome.runtime.getURL('js/libs/jquery.1.8.3.min.js');
-        document.body.appendChild(jquery);
+        var requiredScriptsSequential = [
+            chrome.runtime.getURL('js/libs/jquery.1.8.3.min.js'),
+            chrome.runtime.getURL('js/libs/quill.min.js'),
+            chrome.runtime.getURL('js/libs/notify.min.js'),
+            chrome.runtime.getURL('js/notes.js')
+        ]
+
+        injectJs(document, requiredScriptsSequential[0], function(){
+            injectJs(document, requiredScriptsSequential[1], function() {
+                injectJs(document, requiredScriptsSequential[2], function() {
+                    toggleNotesPanel(true);
+                    injectJs(document, requiredScriptsSequential[3], undefined, "notesPanelScriptId")
+                })
+            })
+        })
+
+        // var jquery = document.createElement("script");
+        // jquery.src = chrome.runtime.getURL('js/libs/jquery.1.8.3.min.js');
+        // document.body.appendChild(jquery);
     
-        var quillJs = document.createElement("script");
-        quillJs.src = chrome.runtime.getURL('js/libs/quill.min.js');
-        document.body.appendChild(quillJs);
+        // var quillJs = document.createElement("script");
+        // quillJs.src = chrome.runtime.getURL('js/libs/quill.min.js');
+        // document.body.appendChild(quillJs);
     
         var quillCss = document.createElement("link");
         quillCss.rel = "stylesheet";
         quillCss.href = chrome.runtime.getURL('css/libs/quill.snow.min.css');
         document.head.appendChild(quillCss);
 
-        var notifyJs = document.createElement("script");
-        notifyJs.id = "notifyJsScriptId";
-        notifyJs.src = chrome.runtime.getURL('js/libs/notify.min.js');
-        document.body.appendChild(notifyJs);
         
-        var quilScript = document.createElement("script");
-        quilScript.src = chrome.runtime.getURL('js/notes.js');
-        document.body.appendChild(quilScript);
+        // document.head.appendChild(createScriptSequence(scriptsToInsert));
+
+        // var notifyJs = document.createElement("script");
+        // notifyJs.id = "notifyJsScriptId";
+        // notifyJs.src = chrome.runtime.getURL('js/libs/notify.min.js');
+        // document.body.appendChild(notifyJs);
+        
+        // var quilScript = document.createElement("script");
+        // quilScript.src = chrome.runtime.getURL('js/notes.js');
+        // document.body.appendChild(quilScript);
     }
 }
 

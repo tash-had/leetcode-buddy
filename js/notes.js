@@ -2,6 +2,14 @@ var change;
 
 function initializeNotesEditor() {
     var Delta = Quill.import('delta');
+
+    var notesArea = document.getElementById("lcb_notesPanelId");
+    if (!notesArea) {
+        notesArea = document.createElement("div");
+        notesArea.innerHTML = "<div id='editor'></div>";
+        document.body.appendChild(notesArea);
+    }
+
     var quill = new Quill('#editor', {
         modules: {
             toolbar: true
@@ -64,4 +72,8 @@ function triggerDataTransfer(dataId, data) {
 
 window.onbeforeunload = function () {
     saveNotes();
+}
+
+window.onload = function () {
+    initializeNotesEditor();
 }
