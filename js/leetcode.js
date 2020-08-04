@@ -326,8 +326,10 @@ function toggleNotesPanel(show) {
                     notesArea.id = "lcb_notesPanelId";
                     editorAreaParent.appendChild(notesArea);
                     
+                    // if script is already loaded, then call make the initialization call again
+                    // (originally called in the notesPanelScript (notes.js) but it wouldn't have worked
+                    // if lcb_notesPanelId wasn't created yet)
                     if (document.getElementById("notesPanelScriptId")) {
-                        // script was loaded before editor space was created. call initialize again.
                         var initNotesScript = document.createElement("script");
                         initNotesScript.innerHTML = "initializeNotesEditor();";
                         initNotesScript.id = "notesPanelInitScriptId";
@@ -423,30 +425,10 @@ function injectNotesPanelLibs() {
             })
         })
 
-        // var jquery = document.createElement("script");
-        // jquery.src = chrome.runtime.getURL('js/libs/jquery.1.8.3.min.js');
-        // document.body.appendChild(jquery);
-    
-        // var quillJs = document.createElement("script");
-        // quillJs.src = chrome.runtime.getURL('js/libs/quill.min.js');
-        // document.body.appendChild(quillJs);
-    
         var quillCss = document.createElement("link");
         quillCss.rel = "stylesheet";
         quillCss.href = chrome.runtime.getURL('css/libs/quill.snow.min.css');
         document.head.appendChild(quillCss);
-
-        
-        // document.head.appendChild(createScriptSequence(scriptsToInsert));
-
-        // var notifyJs = document.createElement("script");
-        // notifyJs.id = "notifyJsScriptId";
-        // notifyJs.src = chrome.runtime.getURL('js/libs/notify.min.js');
-        // document.body.appendChild(notifyJs);
-        
-        // var quilScript = document.createElement("script");
-        // quilScript.src = chrome.runtime.getURL('js/notes.js');
-        // document.body.appendChild(quilScript);
     }
 }
 

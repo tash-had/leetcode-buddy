@@ -55,8 +55,8 @@ function triggerDataTransfer(dataId, data) {
         existingDataDiv.innerHTML = data;
     }
 
-    $.notify("Saved.", {
-        position: "right bottom",
+    $.notify("Note Saved.", {
+        position: "right top",
         className: "success",
         autoHideDelay: 2500
     });
@@ -70,7 +70,9 @@ window.onbeforeunload = function () {
 window.onload = function () {
     var notesArea = document.getElementById("lcb_notesPanelId");
     var initScript = document.getElementById("notesPanelInitScriptId");
-    // make sure notes area has been created before we initialize
+
+    // if the notesPanel has been created and the init script hasn't been injected
+    // from leetcode.js, then initialize the notes editor
     if (notesArea && !initScript) {
         initializeNotesEditor();
     }
