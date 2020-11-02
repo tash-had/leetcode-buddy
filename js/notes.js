@@ -2,10 +2,18 @@ var change;
 
 function initializeNotesEditor() {
     var Delta = Quill.import('delta');
+    
+    var toolbarOptions = [
+        [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+        ['bold', 'italic', 'underline'],        // toggled buttons
+        ['code-block'],
+        [{ 'list': 'bullet' }],
+        [{ 'color': [] }],          // dropdown with defaults from theme
+      ];
 
     var quill = new Quill('#editor', {
         modules: {
-            toolbar: true
+            toolbar: toolbarOptions
         },
         theme: 'snow'
     });
