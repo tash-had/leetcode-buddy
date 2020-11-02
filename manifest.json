@@ -5,7 +5,7 @@
 
     "author": "Tash-had Saqif",
 
-    "manifest_version": 3,
+    "manifest_version": 2,
 
     "content_scripts": [
         {
