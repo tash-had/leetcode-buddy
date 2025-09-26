@@ -366,19 +366,16 @@ function toggleServerCompletionStatus(show) {
                 continue;
             }
 
-            if (statusContainer.classList) {
-                statusContainer.classList.remove(LOCAL_STATUS_CONTAINER_CLASS);
-            }
-
             var serverIcon = getServerStatusNode(statusContainer);
             if (serverIcon) {
-                serverIcon.style.removeProperty('opacity');
-                serverIcon.removeAttribute('aria-hidden');
+                serverIcon.style.opacity = '';
             }
 
             var localIcon = statusContainer.querySelector('.' + LOCAL_STATUS_ICON_CLASS);
-            if (localIcon && localIcon.parentNode) {
-                localIcon.parentNode.removeChild(localIcon);
+            if (localIcon) {
+                localIcon.style.opacity = '0';
+                localIcon.style.display = 'none';
+                localIcon.setAttribute('aria-hidden', 'true');
             }
         }
         return;
@@ -404,10 +401,8 @@ function toggleServerCompletionStatus(show) {
         if (serverNode) {
             if (solved || shouldHideServerIcon(serverNode)) {
                 serverNode.style.opacity = '0';
-                serverNode.setAttribute('aria-hidden', 'true');
             } else {
-                serverNode.style.removeProperty('opacity');
-                serverNode.removeAttribute('aria-hidden');
+                serverNode.style.opacity = '';
             }
         }
 
