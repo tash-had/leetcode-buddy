@@ -68,22 +68,77 @@ function toggleServerCompletionStatus(show) {
     if (isAppScreen()) {
         return;
     } else if (isQuestionAppScreen()) {
-        // 'problems' view 
-        completionChecks = document.querySelectorAll('.reactable-data > tr > td:nth-child(1)');
-        problemNamesList = document.querySelectorAll('.reactable-data > tr > td:nth-child(3)');
+        // Modern LeetCode problems view - look for problem rows with calendar icons
+        var problemRows = document.querySelectorAll('a[href*="/problems/"]');
+        completionChecks = [];
+        problemNamesList = [];
+
+        for (var i = 0; i < problemRows.length; i++) {
+            var problemRow = problemRows[i];
+            // Find the calendar icon (completion status indicator)
+            var calendarIcon = problemRow.querySelector('svg[data-icon="calendar"]');
+            if (calendarIcon) {
+                completionChecks.push(calendarIcon.closest('div'));
+                // Find the problem title
+                var titleDiv = problemRow.querySelector('div.ellipsis');
+                if (titleDiv) {
+                    problemNamesList.push(titleDiv);
+                }
+            }
+        }
     } else if (isFavoriteAppScreen()) {
-        // 'my lists' view
+        // 'my lists' view - try to find with old selectors first, then fallback
         completionChecks = document.getElementsByClassName('css-alevek');
         problemNamesList = document.getElementsByClassName("question-title");
+
+        // Fallback to new structure if old selectors don't work
+        if (completionChecks.length === 0) {
+            var problemRows = document.querySelectorAll('a[href*="/problems/"]');
+            completionChecks = [];
+            problemNamesList = [];
+
+            for (var i = 0; i < problemRows.length; i++) {
+                var problemRow = problemRows[i];
+                var calendarIcon = problemRow.querySelector('svg[data-icon="calendar"]');
+                if (calendarIcon) {
+                    completionChecks.push(calendarIcon.closest('div'));
+                    var titleDiv = problemRow.querySelector('div.ellipsis');
+                    if (titleDiv) {
+                        problemNamesList.push(titleDiv);
+                    }
+                }
+            }
+        }
     } else if (isExploreAppScreen()) {
+        // Explore view - try old selectors first, then fallback
         completionChecks = document.getElementsByClassName("check-mark");
         problemNamesList = [];
-        for (var i = 0; i < completionChecks.length; i++) {
-            var titleElement = completionChecks[i].nextElementSibling;
-            if (titleElement == null) {
-                titleElement = completionChecks[i].parentElement.nextElementSibling;
+
+        if (completionChecks.length > 0) {
+            for (var i = 0; i < completionChecks.length; i++) {
+                var titleElement = completionChecks[i].nextElementSibling;
+                if (titleElement == null) {
+                    titleElement = completionChecks[i].parentElement.nextElementSibling;
+                }
+                problemNamesList.push(titleElement);
             }
-            problemNamesList.push(titleElement);
+        } else {
+            // Fallback to new structure
+            var problemRows = document.querySelectorAll('a[href*="/problems/"]');
+            completionChecks = [];
+            problemNamesList = [];
+
+            for (var i = 0; i < problemRows.length; i++) {
+                var problemRow = problemRows[i];
+                var calendarIcon = problemRow.querySelector('svg[data-icon="calendar"]');
+                if (calendarIcon) {
+                    completionChecks.push(calendarIcon.closest('div'));
+                    var titleDiv = problemRow.querySelector('div.ellipsis');
+                    if (titleDiv) {
+                        problemNamesList.push(titleDiv);
+                    }
+                }
+            }
         }
     } else {
         return;
@@ -100,8 +155,8 @@ function toggleServerCompletionStatus(show) {
             for (var i = 0; i < completionChecks.length; i++) {
                 var problemNameParts = problemNamesList[i].textContent.split(".");
                 var bareProblemName = problemNameParts[problemNameParts.length - 1].trim();
-                if (!(bareProblemName in p_store) || 
-                !(p_store[bareProblemName]["submissionData"]) || 
+                if (!(bareProblemName in p_store) ||
+                !(p_store[bareProblemName]["submissionData"]) ||
                     !(p_store[bareProblemName]["submissionData"]["correctSubmission"]) ) {
                     completionChecks[i].style = 'opacity: 0;';
                 } else {
@@ -118,7 +173,10 @@ function checkForSubmission() {
     if (!isAppScreen() || (currentUrl.indexOf("/submissions/")) < 0) {
         return;
     } else {
+        // Try old selectors first for backward compatibility
         var resultContainerMatches = getElementsByClassNamePrefix(document, "div", "result-container");
+        var correctSubmission = null;
+
         if (resultContainerMatches != null && resultContainerMatches.length > 0) {
             var resultContainer = resultContainerMatches[0];
             var resultArr = getElementsByClassNamePrefix(resultContainer, "div", "result");
@@ -126,22 +184,64 @@ function checkForSubmission() {
                 var result = resultArr[0];
                 var successElementArr = getElementsByClassNamePrefix(result, "div", "success");
                 var failureElementArr = getElementsByClassNamePrefix(result, "div", "error");
-                var correctSubmission = null;
                 if (successElementArr !== null && successElementArr.length > 0) {
-                    // correct submission
                     correctSubmission = true;
                 } else if (failureElementArr != null && failureElementArr.length > 0) {
-                    // incorrect submission
                     correctSubmission = false;
                 }
-                var unixTimestamp = Math.round(+new Date()/1000);
-
-                var submissionData = {
-                    "correctSubmission": correctSubmission,
-                    "submissionTime": unixTimestamp
-                }
-                saveProblemData("submissionData", submissionData);
             }
+        }
+
+        // If old selectors don't work, try new structure
+        if (correctSubmission === null) {
+            // Look for "Accepted" text with green styling
+            var acceptedElement = document.querySelector('span[data-e2e-locator="submission-result"]');
+            if (acceptedElement) {
+                var acceptedText = acceptedElement.textContent.trim();
+                if (acceptedText === "Accepted") {
+                    correctSubmission = true;
+                }
+            }
+
+            // Look for "Wrong Answer" text with red styling
+            if (correctSubmission === null) {
+                var wrongAnswerElement = document.querySelector('h3');
+                if (wrongAnswerElement && wrongAnswerElement.textContent.includes("Wrong Answer")) {
+                    correctSubmission = false;
+                }
+            }
+
+            // Look for other failure indicators
+            if (correctSubmission === null) {
+                var errorSelectors = [
+                    'h3:contains("Runtime Error")',
+                    'h3:contains("Time Limit Exceeded")',
+                    'h3:contains("Memory Limit Exceeded")',
+                    'h3:contains("Output Limit Exceeded")',
+                    'h3:contains("Compilation Error")'
+                ];
+
+                for (var i = 0; i < errorSelectors.length; i++) {
+                    var errorElements = document.querySelectorAll('h3');
+                    for (var j = 0; j < errorElements.length; j++) {
+                        if (errorElements[j].textContent.includes(errorSelectors[i].replace('h3:contains("', '').replace('")', ''))) {
+                            correctSubmission = false;
+                            break;
+                        }
+                    }
+                    if (correctSubmission === false) break;
+                }
+            }
+        }
+
+        // Only save if we successfully determined the result
+        if (correctSubmission !== null) {
+            var unixTimestamp = Math.round(+new Date()/1000);
+            var submissionData = {
+                "correctSubmission": correctSubmission,
+                "submissionTime": unixTimestamp
+            }
+            saveProblemData("submissionData", submissionData);
         }
     }
 };
@@ -159,15 +259,42 @@ function toggleAnnouncement(show) {
 };
 
 function toggleAcceptanceRate(show) {
+    // Try old selectors first for backward compatibility
     var acceptanceRates = document.querySelectorAll('.reactable-data > tr > td:nth-child(5)'),
         rates = document.getElementsByClassName('css-jkjiwi');
+
+    // If old selectors don't work, try new structure
+    if (acceptanceRates.length === 0) {
+        // Look for acceptance rate elements in the new structure
+        var problemRows = document.querySelectorAll('a[href*="/problems/"]');
+        acceptanceRates = [];
+
+        for (var i = 0; i < problemRows.length; i++) {
+            var rateElement = problemRows[i].querySelector('div[data-state="closed"]:not(:last-child)');
+            if (rateElement && rateElement.textContent.includes('%')) {
+                acceptanceRates.push(rateElement);
+            }
+        }
+    }
+
+    if (rates.length === 0) {
+        // Look for rate elements in new structure
+        rates = document.querySelectorAll('div:contains("%")');
+        var newRates = [];
+        for (var i = 0; i < rates.length; i++) {
+            if (/\d+\.\d+%/.test(rates[i].textContent)) {
+                newRates.push(rates[i]);
+            }
+        }
+        rates = newRates;
+    }
 
     if (show) {
         for (var i = 0; i < acceptanceRates.length; ++i) {
             acceptanceRates[i].style = '';
         }
 
-        if (rates !== null) {
+        if (rates !== null && rates.length > 0) {
             for (let i = 0; i < rates.length; i++) {
                 rates[i].style = 'opacity: 100;';
             }
@@ -177,7 +304,7 @@ function toggleAcceptanceRate(show) {
             acceptanceRates[i].style = 'opacity: 0;';
         }
 
-        if (rates !== null) {
+        if (rates !== null && rates.length > 0) {
             for (let i = 0; i < rates.length; i++) {
                 rates[i].style = 'opacity: 0;';
             }
@@ -189,8 +316,26 @@ function toggleDifficulty(show) {
     if ((!isQuestionAppScreen() && !isAppScreen())) {
         return;
     }
+
+    // Try old selectors first for backward compatibility
     var difficulties = document.querySelectorAll('.reactable-data > tr > td:nth-child(6)'),
         difficulty = document.querySelector('[diff]');
+
+    // If old selectors don't work, try new structure
+    if (difficulties.length === 0) {
+        var problemRows = document.querySelectorAll('a[href*="/problems/"]');
+        difficulties = [];
+
+        for (var i = 0; i < problemRows.length; i++) {
+            // Look for difficulty indicators (Easy, Med., Hard)
+            var diffElement = problemRows[i].querySelector('p.mx-0');
+            if (diffElement && (diffElement.textContent.includes('Easy') ||
+                               diffElement.textContent.includes('Med.') ||
+                               diffElement.textContent.includes('Hard'))) {
+                difficulties.push(diffElement);
+            }
+        }
+    }
 
     if (show) {
         for (var i = 0; i < difficulties.length; ++i) {
