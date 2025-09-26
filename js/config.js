@@ -93,8 +93,8 @@ document.addEventListener('DOMContentLoaded', () => {
         toggleNotesWidth(options.notesPanel, options.notesPanelWidth);
         toggleDetailSpans(options);
 
-        chrome.tabs.getSelected(null, function (tab) {
-            chrome.tabs.sendMessage(tab.id, options, null, null);
+        chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
+            chrome.tabs.sendMessage(tabs[0].id, options);
         });
         chrome.storage.sync.set({ lc_buddy_config: options });
     });

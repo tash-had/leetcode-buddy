@@ -366,10 +366,13 @@ function toggleServerCompletionStatus(show) {
                 continue;
             }
 
-            var serverIcon = getServerStatusNode(statusContainer);
-            if (serverIcon) {
-                serverIcon.style.opacity = '';
-            }
+                //     var serverIcon = getServerStatusNode(statusContainer);
+                //    if (serverIcon) {
+                //        serverIcon.style.opacity = '';
+                //        serverIcon.style.display = '';
+                //         serverIcon.style.visibility = '';
+                // }
+
 
             var localIcon = statusContainer.querySelector('.' + LOCAL_STATUS_ICON_CLASS);
             if (localIcon) {
@@ -952,6 +955,6 @@ document.addEventListener('DOMContentLoaded', function(e) {
     });
 });
 
-chrome.extension.onMessage.addListener(function(options, sender, object, sendResponse) {
+chrome.runtime.onMessage.addListener(function(options, sender, sendResponse) {
     updateOptions(options);
 });
