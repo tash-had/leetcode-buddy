@@ -1,47 +1,52 @@
 {
-    "name": "LeetCode Buddy",
-    "description": "An extension that makes you more productive while you LeetCode.",
-    "version": "1.4",
+  "name": "LeetCode Buddy",
+  "description": "An extension that makes you more productive while you LeetCode.",
+  "version": "1.4",
+  "author": "Tash-had Saqif",
+  "manifest_version": 3,
 
-    "author": "Tash-had Saqif",
+  "content_scripts": [
+    {
+      "matches": ["https://leetcode.com/*"],
+      "css": ["css/leetcode.css"],
+      "js": ["js/common.js", "js/leetcode.js"],
+      "run_at": "document_start",
+      "all_frames": true
+    }
+  ],
+  "background": { "service_worker": "js/background.js" },
+  "permissions": [
+    "scripting",
+    "tabs",
+    "activeTab",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://leetcode.com/*"
+  ],
 
-    "manifest_version": 2,
+  "icons": {
+    "16": "img/icon-16.png",
+    "48": "img/icon-48.png",
+    "128": "img/icon.png"
+  },
 
-    "content_scripts": [
-        {
-            "matches": ["https://leetcode.com/*"],
-            "css": ["css/leetcode.css"],
-            "js": ["js/common.js", "js/leetcode.js"],
-            "run_at": "document_start",
-            "all_frames": true
-        }
-    ],
-    "background": {
-        "scripts": ["js/background.js"]
-    },
+  "action": {
+    "default_title": "LeetCode Buddy",
+    "default_icon": "img/icon-disabled.png",
+    "default_popup": "html/config.html"
+  },
 
-    "permissions": [
-        "tabs",
-        "https://leetcode.com/*",
-        "activeTab",
-        "storage"
-    ],
-    "icons": {
-        "16": "img/icon-16.png",
-        "48": "img/icon-48.png",
-        "128": "img/icon.png"
-    },
-    "browser_action": {    
-        "default_title" : "LeetCode Buddy",
-        "default_icon" : "img/icon-disabled.png",
-        "default_popup": "html/config.html"
-    },
-
-    "web_accessible_resources": [
+  "web_accessible_resources": [
+    {
+      "resources": [
         "js/libs/jquery.1.8.3.min.js",
         "js/libs/notify.min.js",
         "js/libs/quill.min.js",
         "css/libs/quill.snow.min.css",
         "js/notes.js"
-    ]
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ]
 }
