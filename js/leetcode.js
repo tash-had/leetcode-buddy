@@ -12,7 +12,297 @@ var options = {
 };
 
 var p_store = {};
+var p_store_slug_index = {};
 var mo = null;
+
+var LOCAL_STATUS_STYLE_ID = 'lcb-local-status-style';
+var LOCAL_STATUS_ICON_CLASS = 'lcb-local-status-icon';
+var LOCAL_STATUS_CONTAINER_CLASS = 'lcb-local-status-container';
+
+function ensureLocalStatusStylesInjected() {
+    if (document.getElementById(LOCAL_STATUS_STYLE_ID)) {
+        return;
+    }
+
+    var style = document.createElement('style');
+    style.id = LOCAL_STATUS_STYLE_ID;
+    style.textContent = '' +
+        '.' + LOCAL_STATUS_CONTAINER_CLASS + '{position:relative;}' +
+        '.' + LOCAL_STATUS_ICON_CLASS + '{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;align-items:center;justify-content:center;font-size:14px;color:#16a34a;opacity:0;transition:opacity 0.2s ease-in-out;pointer-events:none;font-weight:600;}';
+    document.head.appendChild(style);
+}
+
+function refreshSlugIndex() {
+    p_store_slug_index = {};
+    if (!p_store) {
+        return;
+    }
+
+    for (var problemName in p_store) {
+        if (!p_store.hasOwnProperty(problemName)) {
+            continue;
+        }
+        var entry = p_store[problemName];
+        if (!entry) {
+            continue;
+        }
+
+        var slug = entry.slug;
+        if (!slug && entry.link) {
+            var match = entry.link.match(/\/problems\/([^\/?#]+)/);
+            if (match && match[1]) {
+                slug = match[1];
+            }
+        }
+
+        if (slug) {
+            p_store_slug_index[slug] = {
+                key: problemName,
+                entry: entry
+            };
+        }
+    }
+}
+
+function getProblemListRows() {
+    var selectors = [
+        'a[href^="/problems/"][id]',
+        'a[href^="/problems/"][data-row-key]'
+    ];
+    var rowSet = new Set();
+    var rows = [];
+
+    for (var i = 0; i < selectors.length; i++) {
+        var nodeList = document.querySelectorAll(selectors[i]);
+        for (var j = 0; j < nodeList.length; j++) {
+            var node = nodeList[j];
+            if (!node || rowSet.has(node)) {
+                continue;
+            }
+
+            var identifier = node.getAttribute('id');
+            var rowKey = node.getAttribute('data-row-key');
+            var hasNumericId = identifier && /^\d+$/.test(identifier);
+            var qualifies = hasNumericId || !!rowKey;
+
+            if (!qualifies) {
+                if (node.classList && node.classList.contains('group')) {
+                    qualifies = true;
+                }
+            }
+
+            if (!qualifies) {
+                var parsedData = parseProblemDataFromRow(node);
+                if (!parsedData || (!parsedData.problemName && !parsedData.slug)) {
+                    continue;
+                }
+            }
+
+            rowSet.add(node);
+            rows.push(node);
+        }
+    }
+
+    return rows;
+}
+
+function parseProblemDataFromRow(row) {
+    if (!row) {
+        return null;
+    }
+
+    var titleSelectors = [
+        '.ellipsis',
+        '.line-clamp-1',
+        '.truncate',
+        '[data-e2e-locator="question-title"]',
+        '[data-cy="question-title"]'
+    ];
+    var titleElement = null;
+
+    for (var i = 0; i < titleSelectors.length; i++) {
+        titleElement = row.querySelector(titleSelectors[i]);
+        if (titleElement) {
+            break;
+        }
+    }
+
+    if (!titleElement) {
+        // fallback: find the first child text div
+        titleElement = row.querySelector('div');
+    }
+
+    var slug = null;
+    var href = row.getAttribute('href');
+    if (href) {
+        var match = href.match(/\/problems\/([^\/?#]+)/);
+        if (match && match[1]) {
+            slug = match[1];
+        }
+    }
+
+    if (!titleElement || !titleElement.textContent) {
+        if (slug) {
+            return {
+                problemName: null,
+                slug: slug
+            };
+        }
+        return null;
+    }
+
+    var fullTitle = titleElement.textContent.replace(/\s+/g, ' ').trim();
+    if (!fullTitle) {
+        if (slug) {
+            return {
+                problemName: null,
+                slug: slug
+            };
+        }
+        return null;
+    }
+
+    var problemName = fullTitle;
+    var dotIndex = fullTitle.indexOf('.');
+    if (dotIndex > -1) {
+        var possibleNumber = fullTitle.substring(0, dotIndex).trim();
+        if (/^\d+$/.test(possibleNumber)) {
+            problemName = fullTitle.substring(dotIndex + 1).trim();
+        }
+    }
+
+    return {
+        problemName: problemName || null,
+        slug: slug
+    };
+}
+
+function getRowStatusContainer(row) {
+    if (!row) {
+        return null;
+    }
+
+    var contentWrapper = row.firstElementChild;
+    var statusContainer = null;
+
+    if (contentWrapper && contentWrapper.firstElementChild) {
+        statusContainer = contentWrapper.firstElementChild;
+        if (statusContainer) {
+            var svgCheck = statusContainer.querySelector('svg');
+            if (!svgCheck && statusContainer.firstElementChild) {
+                svgCheck = statusContainer.firstElementChild.querySelector && statusContainer.firstElementChild.querySelector('svg');
+                if (!svgCheck && statusContainer.firstElementChild && statusContainer.firstElementChild.firstElementChild) {
+                    var inner = statusContainer.firstElementChild.firstElementChild;
+                    if (inner && typeof inner.querySelector === 'function') {
+                        svgCheck = inner.querySelector('svg');
+                        if (svgCheck) {
+                            statusContainer = inner;
+                        }
+                    }
+                }
+            }
+            if (svgCheck) {
+                statusContainer = svgCheck.parentElement;
+                while (statusContainer && statusContainer !== row && statusContainer.tagName && statusContainer.tagName.toLowerCase() !== 'div') {
+                    statusContainer = statusContainer.parentElement;
+                }
+            }
+        }
+    }
+
+    if (!statusContainer) {
+        var firstSvg = row.querySelector('svg[data-icon="check"], svg[data-icon="calendar"], svg');
+        if (firstSvg && firstSvg.parentElement) {
+            statusContainer = firstSvg.parentElement;
+        }
+    }
+
+    return statusContainer;
+}
+
+function ensureLocalStatusIcon(container) {
+    if (!container) {
+        return null;
+    }
+
+    ensureLocalStatusStylesInjected();
+    if (container.classList) {
+        container.classList.add(LOCAL_STATUS_CONTAINER_CLASS);
+    }
+
+    var icon = container.querySelector('.' + LOCAL_STATUS_ICON_CLASS);
+    if (!icon) {
+        icon = document.createElement('span');
+        icon.className = LOCAL_STATUS_ICON_CLASS;
+        icon.textContent = '✓';
+        container.appendChild(icon);
+    }
+    return icon;
+}
+
+function getServerStatusNode(container) {
+    if (!container) {
+        return null;
+    }
+
+    var serverIcon = container.querySelector('svg');
+    if (serverIcon) {
+        return serverIcon;
+    }
+
+    return null;
+}
+
+function shouldHideServerIcon(node) {
+    if (!node) {
+        return false;
+    }
+
+    var dataIcon = node.getAttribute('data-icon');
+    if (dataIcon && dataIcon.toLowerCase().indexOf('check') !== -1) {
+        return true;
+    }
+
+    var className = node.getAttribute('class');
+    if (className && className.toLowerCase().indexOf('check') !== -1) {
+        return true;
+    }
+
+    var ariaLabel = node.getAttribute('aria-label');
+    if (ariaLabel && ariaLabel.toLowerCase().indexOf('check') !== -1) {
+        return true;
+    }
+
+    return false;
+}
+
+function isProblemSolvedLocally(problemName, slug) {
+    if (!p_store) {
+        return false;
+    }
+
+    var entry = null;
+    if (slug && p_store_slug_index && p_store_slug_index[slug]) {
+        entry = p_store_slug_index[slug].entry;
+    }
+
+    if (!entry && problemName && p_store[problemName]) {
+        entry = p_store[problemName];
+    }
+
+    if (!entry && problemName) {
+        var trimmedName = problemName.trim();
+        if (trimmedName !== problemName && p_store[trimmedName]) {
+            entry = p_store[trimmedName];
+        }
+    }
+
+    if (!entry) {
+        return false;
+    }
+
+    return !!(entry["submissionData"] && entry["submissionData"]["correctSubmission"]);
+}
 
 function updateOptions(newOptions) {
     if (options.serverCompletionStatus !== newOptions.serverCompletionStatus) {
@@ -62,52 +352,70 @@ function updateOptions(newOptions) {
 };
 
 function toggleServerCompletionStatus(show) {
-    var problemNamesList = null;
-    var completionChecks = null;
+    var problemRows = getProblemListRows();
 
-    if (isAppScreen()) {
-        return;
-    } else if (isQuestionAppScreen()) {
-        // 'problems' view 
-        completionChecks = document.querySelectorAll('.reactable-data > tr > td:nth-child(1)');
-        problemNamesList = document.querySelectorAll('.reactable-data > tr > td:nth-child(3)');
-    } else if (isFavoriteAppScreen()) {
-        // 'my lists' view
-        completionChecks = document.getElementsByClassName('css-alevek');
-        problemNamesList = document.getElementsByClassName("question-title");
-    } else if (isExploreAppScreen()) {
-        completionChecks = document.getElementsByClassName("check-mark");
-        problemNamesList = [];
-        for (var i = 0; i < completionChecks.length; i++) {
-            var titleElement = completionChecks[i].nextElementSibling;
-            if (titleElement == null) {
-                titleElement = completionChecks[i].parentElement.nextElementSibling;
-            }
-            problemNamesList.push(titleElement);
-        }
-    } else {
+    if (!problemRows || problemRows.length === 0) {
         return;
     }
 
     if (show) {
-        if (completionChecks !== null && completionChecks.length > 0) {
-            for (var i = 0; i < completionChecks.length; i++) {
-                completionChecks[i].style = '';
+        for (var i = 0; i < problemRows.length; i++) {
+            var row = problemRows[i];
+            var statusContainer = getRowStatusContainer(row);
+            if (!statusContainer) {
+                continue;
+            }
+
+            if (statusContainer.classList) {
+                statusContainer.classList.remove(LOCAL_STATUS_CONTAINER_CLASS);
+            }
+
+            var serverIcon = getServerStatusNode(statusContainer);
+            if (serverIcon) {
+                serverIcon.style.removeProperty('opacity');
+                serverIcon.removeAttribute('aria-hidden');
+            }
+
+            var localIcon = statusContainer.querySelector('.' + LOCAL_STATUS_ICON_CLASS);
+            if (localIcon && localIcon.parentNode) {
+                localIcon.parentNode.removeChild(localIcon);
             }
         }
-    } else {
-        if (completionChecks !== null && completionChecks.length > 0) {
-            for (var i = 0; i < completionChecks.length; i++) {
-                var problemNameParts = problemNamesList[i].textContent.split(".");
-                var bareProblemName = problemNameParts[problemNameParts.length - 1].trim();
-                if (!(bareProblemName in p_store) || 
-                !(p_store[bareProblemName]["submissionData"]) || 
-                    !(p_store[bareProblemName]["submissionData"]["correctSubmission"]) ) {
-                    completionChecks[i].style = 'opacity: 0;';
-                } else {
-                    completionChecks[i].style = '';
-                }
+        return;
+    }
+
+    for (var j = 0; j < problemRows.length; j++) {
+        var problemRow = problemRows[j];
+        var statusNode = getRowStatusContainer(problemRow);
+        if (!statusNode) {
+            continue;
+        }
+
+        var problemData = parseProblemDataFromRow(problemRow);
+        if (!problemData || (!problemData.problemName && !problemData.slug)) {
+            continue;
+        }
+        var solved = false;
+        if (problemData) {
+            solved = isProblemSolvedLocally(problemData.problemName, problemData.slug);
+        }
+
+        var serverNode = getServerStatusNode(statusNode);
+        if (serverNode) {
+            if (solved || shouldHideServerIcon(serverNode)) {
+                serverNode.style.opacity = '0';
+                serverNode.setAttribute('aria-hidden', 'true');
+            } else {
+                serverNode.style.removeProperty('opacity');
+                serverNode.removeAttribute('aria-hidden');
             }
+        }
+
+        var localStatusIcon = ensureLocalStatusIcon(statusNode);
+        if (localStatusIcon) {
+            localStatusIcon.style.display = 'flex';
+            localStatusIcon.style.opacity = solved ? '1' : '0';
+            localStatusIcon.setAttribute('aria-hidden', solved ? 'false' : 'true');
         }
     }
 };
@@ -115,34 +423,79 @@ function toggleServerCompletionStatus(show) {
 
 function checkForSubmission() {
     var currentUrl = location.href;
-    if (!isAppScreen() || (currentUrl.indexOf("/submissions/")) < 0) {
+    if (!currentUrl || (currentUrl.indexOf("/submissions/")) < 0) {
         return;
     } else {
-        var resultContainerMatches = getElementsByClassNamePrefix(document, "div", "result-container");
-        if (resultContainerMatches != null && resultContainerMatches.length > 0) {
-            var resultContainer = resultContainerMatches[0];
-            var resultArr = getElementsByClassNamePrefix(resultContainer, "div", "result");
-            if (resultArr != null && resultArr.length > 0) {
-                var result = resultArr[0];
-                var successElementArr = getElementsByClassNamePrefix(result, "div", "success");
-                var failureElementArr = getElementsByClassNamePrefix(result, "div", "error");
-                var correctSubmission = null;
-                if (successElementArr !== null && successElementArr.length > 0) {
-                    // correct submission
-                    correctSubmission = true;
-                } else if (failureElementArr != null && failureElementArr.length > 0) {
-                    // incorrect submission
-                    correctSubmission = false;
-                }
-                var unixTimestamp = Math.round(+new Date()/1000);
-
-                var submissionData = {
-                    "correctSubmission": correctSubmission,
-                    "submissionTime": unixTimestamp
-                }
-                saveProblemData("submissionData", submissionData);
+        var resultCandidates = [];
+        var locatorMatches = document.querySelectorAll('[data-e2e-locator="submission-result"]');
+        if (locatorMatches) {
+            for (var i = 0; i < locatorMatches.length; i++) {
+                resultCandidates.push(locatorMatches[i]);
             }
         }
+
+        var headingMatches = document.querySelectorAll('h3, h2, h1');
+        if (headingMatches) {
+            for (var j = 0; j < headingMatches.length; j++) {
+                resultCandidates.push(headingMatches[j]);
+            }
+        }
+
+        var correctSubmission = null;
+        var successKeywords = ['accepted'];
+        var failureKeywords = ['wrong answer', 'time limit exceeded', 'runtime error', 'memory limit exceeded', 'compile error', 'output limit exceeded'];
+
+        for (var k = 0; k < resultCandidates.length; k++) {
+            var candidate = resultCandidates[k];
+            if (!candidate || !candidate.textContent) {
+                continue;
+            }
+            var text = candidate.textContent.replace(/\s+/g, ' ').trim().toLowerCase();
+            if (!text) {
+                continue;
+            }
+
+            for (var s = 0; s < successKeywords.length; s++) {
+                if (text.indexOf(successKeywords[s]) === 0 || text === successKeywords[s]) {
+                    correctSubmission = true;
+                    break;
+                }
+            }
+            if (correctSubmission === true) {
+                break;
+            }
+
+            for (var f = 0; f < failureKeywords.length; f++) {
+                if (text.indexOf(failureKeywords[f]) !== -1) {
+                    correctSubmission = false;
+                    break;
+                }
+            }
+            if (correctSubmission === false) {
+                break;
+            }
+        }
+
+        if (correctSubmission === null && document.body && document.body.innerText) {
+            var bodyText = document.body.innerText.toLowerCase();
+            for (var fb = 0; fb < failureKeywords.length; fb++) {
+                if (bodyText.indexOf(failureKeywords[fb]) !== -1) {
+                    correctSubmission = false;
+                    break;
+                }
+            }
+        }
+
+        if (correctSubmission === null) {
+            return;
+        }
+
+        var unixTimestamp = Math.round(+new Date()/1000);
+        var submissionData = {
+            "correctSubmission": correctSubmission,
+            "submissionTime": unixTimestamp
+        }
+        saveProblemData("submissionData", submissionData);
     }
 };
 
@@ -358,11 +711,27 @@ function toggleNotesPanelWidth(newWidth) {
 
 function saveProblemData(dataKey, dataVal) {
     var problemTitle = getProblemTitle();
+    if (!problemTitle) {
+        return;
+    }
+
     var problemNumber = problemTitle["problemNumber"];
     var problemName = problemTitle["problemName"];
+    var slug = problemTitle["slug"];
+    var storeKey = problemName || slug;
 
-    if ((problemName in p_store) && (p_store[problemName][dataKey] == dataVal)) {
-        // given data already exists in store and value hasn't changed. 
+    if (!storeKey) {
+        return;
+    }
+
+    var existingEntry = null;
+    if (problemName && p_store[problemName]) {
+        existingEntry = p_store[problemName];
+    } else if (slug && p_store_slug_index && p_store_slug_index[slug]) {
+        existingEntry = p_store_slug_index[slug].entry;
+    }
+
+    if (existingEntry && existingEntry[dataKey] === dataVal) {
         return;
     }
 
@@ -372,20 +741,58 @@ function saveProblemData(dataKey, dataVal) {
         if (cur_p_store === undefined) {
             cur_p_store = {};
         }
-        if (!(problemName in cur_p_store)) {
-            // question has never been submitted before
-            cur_p_store[problemName] = {};
-            cur_p_store[problemName][dataKey] = dataVal;
-            cur_p_store[problemName]["problemNumber"] = problemNumber;
-            cur_p_store[problemName]["link"] = location.href;
-        } else {
-            // question has been submitted before
-            cur_p_store[problemName][dataKey] = dataVal;
+
+        var targetKey = null;
+        if (problemName && cur_p_store[problemName]) {
+            targetKey = problemName;
+        } else if (slug) {
+            if (p_store_slug_index && p_store_slug_index[slug]) {
+                targetKey = p_store_slug_index[slug].key;
+            }
+
+            if (!targetKey) {
+                for (var key in cur_p_store) {
+                    if (!cur_p_store.hasOwnProperty(key)) {
+                        continue;
+                    }
+                    var entry = cur_p_store[key];
+                    if (!entry) {
+                        continue;
+                    }
+                    if ((entry.slug && entry.slug === slug) || (entry.link && entry.link.indexOf('/problems/' + slug) !== -1)) {
+                        targetKey = key;
+                        break;
+                    }
+                }
+            }
         }
+
+        if (!targetKey) {
+            targetKey = storeKey;
+        }
+
+        if (!cur_p_store[targetKey]) {
+            cur_p_store[targetKey] = {};
+        }
+
+        cur_p_store[targetKey][dataKey] = dataVal;
+        if (problemNumber !== undefined) {
+            cur_p_store[targetKey]["problemNumber"] = problemNumber;
+        }
+        if (problemName) {
+            cur_p_store[targetKey]["problemName"] = problemName;
+        }
+        if (slug) {
+            cur_p_store[targetKey]["slug"] = slug;
+        }
+        cur_p_store[targetKey]["link"] = location.href;
+
         p_store = cur_p_store;
+        refreshSlugIndex();
         chrome.storage.sync.set({
             lc_buddy_p_store: cur_p_store
         });
+        toggleServerCompletionStatus(options.serverCompletionStatus);
     });
 }
 
@@ -465,7 +872,8 @@ function setObservers() {
     var qa = document.getElementById('question-app'),
         app = document.getElementById('app'),
         fa = document.getElementById('favorite-app'),
-        ea = document.getElementById('explore-app');
+        ea = document.getElementById('explore-app'),
+        nextRoot = document.getElementById('__next');
 
     if (qa !== null) {
         mo.observe(qa, {
@@ -501,6 +909,18 @@ function setObservers() {
             subtree: true
         });
     }
+
+    if (nextRoot !== null) {
+        mo.observe(nextRoot, {
+            childList: true,
+            subtree: true
+        });
+    } else if (!qa && !app && !fa && !ea && document.body) {
+        mo.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    }
 };
 
 document.addEventListener('DOMContentLoaded', function(e) {
@@ -526,8 +946,13 @@ document.addEventListener('DOMContentLoaded', function(e) {
             chrome.storage.sync.set({
                 lc_buddy_p_store: {}
             });
+            p_store = {};
+            refreshSlugIndex();
+            toggleServerCompletionStatus(options.serverCompletionStatus);
         } else {
             p_store = store['lc_buddy_p_store'];
+            refreshSlugIndex();
+            toggleServerCompletionStatus(options.serverCompletionStatus);
         }
     });
 });
