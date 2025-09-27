@@ -77,26 +77,40 @@ document.addEventListener('DOMContentLoaded', () => {
         toggleDetailSpans(opts);
     });
 
-    configControlPanel.addEventListener('input', () => {
-        var options = {
-            serverCompletionStatus: serverCompletionStatus.checked,
-            notesPanel: notesPanel.checked,
-            notesPanelWidth: notesPanelWidth.value,
-            announcement: announcement.checked,
-            acceptanceRate: acceptanceRate.checked,
-            difficulty: difficulty.checked,
-            lockedQuestions: lockedQuestions.checked,
-            resultCountNode: resultCountNode.checked,
-            solvedDifficultyCounts: solvedDifficultyCounts.checked
-        };
+    configControlPanel.addEventListener('input', (event) => {
+        chrome.storage.sync.get('lc_buddy_config', (prevOptions) => {
+            var prevOpts = prevOptions['lc_buddy_config'] || {};
+            var options = {
+                serverCompletionStatus: serverCompletionStatus.checked,
+                notesPanel: notesPanel.checked,
+                notesPanelWidth: notesPanelWidth.value,
+                announcement: announcement.checked,
+                acceptanceRate: acceptanceRate.checked,
+                difficulty: difficulty.checked,
+                lockedQuestions: lockedQuestions.checked,
+                resultCountNode: resultCountNode.checked,
+                solvedDifficultyCounts: solvedDifficultyCounts.checked
+            };
 
-        toggleNotesWidth(options.notesPanel, options.notesPanelWidth);
-        toggleDetailSpans(options);
+            toggleNotesWidth(options.notesPanel, options.notesPanelWidth);
+            toggleDetailSpans(options);
 
-        chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
-            chrome.tabs.sendMessage(tabs[0].id, options);
+            // Check if completion status was toggled to "Showing from server" (true)
+            var completionStatusToggledToServer = false;
+            if (event.target.id === 'serverCompletionStatus') {
+                completionStatusToggledToServer = !prevOpts.serverCompletionStatus && options.serverCompletionStatus;
+            }
+
+            chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
+                chrome.tabs.sendMessage(tabs[0].id, options);
+
+                // Refresh the page if completion status was toggled to server
+                if (completionStatusToggledToServer) {
+                    chrome.tabs.reload(tabs[0].id);
+                }
+            });
+            chrome.storage.sync.set({ lc_buddy_config: options });
         });
-        chrome.storage.sync.set({ lc_buddy_config: options });
     });
 });
 
