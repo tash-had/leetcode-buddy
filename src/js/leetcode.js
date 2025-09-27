@@ -1,12 +1,12 @@
 var options = {
     serverCompletionStatus: false,
-    notesPanel: true,
+    notesPanel: false,
     notesPanelWidth: 30,
     announcement: false,
-    acceptanceRate: false,
-    difficulty: false,
+    acceptanceRate: true,
+    difficulty: true,
     lockedQuestions: false,
-    resultCountNode: true,
+    resultCountNode: false,
     resultCount: 0,
     solvedDifficultyCounts: false
 };

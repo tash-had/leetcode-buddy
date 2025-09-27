@@ -3,14 +3,6 @@ var configEnableDisableLabels = {
         true: "Showing from server",
         false: "Showing from local store"
     },
-    notesPanel: {
-        true: "Showing Notes Panel",
-        false: "Disabled"
-    },
-    announcement: {
-        true: "Showing Announcement",
-        false: "Disabled"
-    },
     acceptanceRate: {
         true: "Showing Acceptance Rate",
         false: "Disabled"
@@ -18,30 +10,42 @@ var configEnableDisableLabels = {
     difficulty: {
         true: "Showing Difficulty",
         false: "Disabled"
-    },
-    lockedQuestions: {
-        true: "Showing Locked Questions",
-        false: "Hiding Locked Questions"
-    },
-    resultCountNode: {
-        true: "Showing Result Count",
-        false: "Disabled"
-    },
-    solvedDifficultyCounts: {
-        true: "Enabled",
-        false: "Disabled"
     }
+    // DISABLED FEATURES - labels removed
+    // notesPanel: {
+    //     true: "Showing Notes Panel",
+    //     false: "Disabled"
+    // },
+    // announcement: {
+    //     true: "Showing Announcement",
+    //     false: "Disabled"
+    // },
+    // lockedQuestions: {
+    //     true: "Showing Locked Questions",
+    //     false: "Hiding Locked Questions"
+    // },
+    // resultCountNode: {
+    //     true: "Showing Result Count",
+    //     false: "Disabled"
+    // },
+    // solvedDifficultyCounts: {
+    //     true: "Enabled",
+    //     false: "Disabled"
+    // }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     var configControlPanel = document.getElementById('configControlPanel'),
         serverCompletionStatus = document.getElementById('serverCompletionStatus'),
-        notesPanel = document.getElementById('notesPanel'),
-        notesPanelWidth = document.getElementById('notesPanelWidth'),
-        announcement = document.getElementById('announcement'),
         acceptanceRate = document.getElementById('acceptanceRate'),
-        difficulty = document.getElementById('difficulty'),
-        lockedQuestions = document.getElementById('lockedQuestions');
+        difficulty = document.getElementById('difficulty');
+        // DISABLED FEATURES - commented out
+        // notesPanel = document.getElementById('notesPanel'),
+        // notesPanelWidth = document.getElementById('notesPanelWidth'),
+        // announcement = document.getElementById('announcement'),
+        // lockedQuestions = document.getElementById('lockedQuestions'),
+        // resultCountNode = document.getElementById('resultCountNode'),
+        // solvedDifficultyCounts = document.getElementById('solvedDifficultyCounts');
 
     chrome.storage.sync.get('lc_buddy_config', (options) => {
         var opts = options['lc_buddy_config'];
@@ -49,31 +53,32 @@ document.addEventListener('DOMContentLoaded', () => {
         if (opts === undefined) {
             opts = {
                 serverCompletionStatus: false,
-                notesPanel: true,
-                notesPanelWidth: 30,
-                announcement: false,
-                acceptanceRate: false,
-                difficulty: false,
-                lockedQuestions: false,
-                resultCountNode: true,
-                resultCount: 0,
-                solvedDifficultyCounts: false
+                acceptanceRate: true,
+                difficulty: true
+                // DISABLED FEATURES - removed from config
+                // notesPanel: false,
+                // notesPanelWidth: 30,
+                // announcement: false,
+                // lockedQuestions: false,
+                // resultCountNode: false,
+                // resultCount: 0,
+                // solvedDifficultyCounts: false
             };
             chrome.storage.sync.set({ lc_buddy_config: opts });
-            toggleDetailSpans(opts);
         }
 
         serverCompletionStatus.checked = opts.serverCompletionStatus;
-        notesPanel.checked = opts.notesPanel;
-        notesPanelWidth.value = opts.notesPanelWidth;
-        announcement.checked = opts.announcement;
         acceptanceRate.checked = opts.acceptanceRate;
         difficulty.checked = opts.difficulty;
-        lockedQuestions.checked = opts.lockedQuestions;
-        resultCountNode.checked = opts.resultCountNode;
-        solvedDifficultyCounts.checked = opts.solvedDifficultyCounts;
+        // DISABLED FEATURES - checkbox assignments commented out
+        // notesPanel.checked = opts.notesPanel;
+        // notesPanelWidth.value = opts.notesPanelWidth;
+        // announcement.checked = opts.announcement;
+        // lockedQuestions.checked = opts.lockedQuestions;
+        // resultCountNode.checked = opts.resultCountNode;
+        // solvedDifficultyCounts.checked = opts.solvedDifficultyCounts;
 
-        toggleNotesWidth(opts.notesPanel, opts.notesPanelWidth);
+        // toggleNotesWidth(opts.notesPanel, opts.notesPanelWidth);
         toggleDetailSpans(opts);
     });
 
@@ -82,17 +87,18 @@ document.addEventListener('DOMContentLoaded', () => {
             var prevOpts = prevOptions['lc_buddy_config'] || {};
             var options = {
                 serverCompletionStatus: serverCompletionStatus.checked,
-                notesPanel: notesPanel.checked,
-                notesPanelWidth: notesPanelWidth.value,
-                announcement: announcement.checked,
                 acceptanceRate: acceptanceRate.checked,
-                difficulty: difficulty.checked,
-                lockedQuestions: lockedQuestions.checked,
-                resultCountNode: resultCountNode.checked,
-                solvedDifficultyCounts: solvedDifficultyCounts.checked
+                difficulty: difficulty.checked
+                // DISABLED FEATURES - removed from options
+                // notesPanel: notesPanel.checked,
+                // notesPanelWidth: notesPanelWidth.value,
+                // announcement: announcement.checked,
+                // lockedQuestions: lockedQuestions.checked,
+                // resultCountNode: resultCountNode.checked,
+                // solvedDifficultyCounts: solvedDifficultyCounts.checked
             };
 
-            toggleNotesWidth(options.notesPanel, options.notesPanelWidth);
+            // toggleNotesWidth(options.notesPanel, options.notesPanelWidth);
             toggleDetailSpans(options);
 
             // Check if completion status was toggled to "Showing from server" (true)
