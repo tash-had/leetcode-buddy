@@ -511,7 +511,8 @@ function toggleAnnouncement(show) {
 
 function toggleAcceptanceRate(show) {
     var acceptanceRates = document.querySelectorAll('.reactable-data > tr > td:nth-child(5)'),
-        rates = document.getElementsByClassName('css-jkjiwi');
+        rates = document.getElementsByClassName('css-jkjiwi'),
+        newAcceptanceRates = document.querySelectorAll('.text-sd-muted-foreground[data-state="closed"]');
 
     if (show) {
         for (var i = 0; i < acceptanceRates.length; ++i) {
@@ -523,6 +524,10 @@ function toggleAcceptanceRate(show) {
                 rates[i].style = 'opacity: 100;';
             }
         }
+
+        for (var i = 0; i < newAcceptanceRates.length; ++i) {
+            newAcceptanceRates[i].style = '';
+        }
     } else {
         for (var i = 0; i < acceptanceRates.length; ++i) {
             acceptanceRates[i].style = 'opacity: 0;';
@@ -533,15 +538,17 @@ function toggleAcceptanceRate(show) {
                 rates[i].style = 'opacity: 0;';
             }
         }
+
+        for (var i = 0; i < newAcceptanceRates.length; ++i) {
+            newAcceptanceRates[i].style = 'opacity: 0;';
+        }
     }
 };
 
 function toggleDifficulty(show) {
-    if ((!isQuestionAppScreen() && !isAppScreen())) {
-        return;
-    }
     var difficulties = document.querySelectorAll('.reactable-data > tr > td:nth-child(6)'),
-        difficulty = document.querySelector('[diff]');
+        difficulty = document.querySelector('[diff]'),
+        newDifficulties = document.querySelectorAll('p.text-sd-easy, p.text-sd-medium, p.text-sd-hard');
 
     if (show) {
         for (var i = 0; i < difficulties.length; ++i) {
@@ -551,6 +558,10 @@ function toggleDifficulty(show) {
         if (difficulty !== null) {
             difficulty.style = 'display: block;';
         }
+
+        for (var i = 0; i < newDifficulties.length; ++i) {
+            newDifficulties[i].style = '';
+        }
     } else {
         for (var i = 0; i < difficulties.length; ++i) {
             difficulties[i].style = 'opacity: 0;';
@@ -558,6 +569,10 @@ function toggleDifficulty(show) {
 
         if (difficulty !== null) {
             difficulty.style = 'display: none;';
+        }
+
+        for (var i = 0; i < newDifficulties.length; ++i) {
+            newDifficulties[i].style = 'display: none;';
         }
     }
 };
