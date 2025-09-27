@@ -42,7 +42,7 @@ h2 {
     text-align: center;
 }
 
-#configDiv > h2 {
+#configDiv > h2, #configDiv > p {
     color: black;
 }
 
