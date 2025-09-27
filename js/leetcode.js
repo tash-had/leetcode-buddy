@@ -512,7 +512,8 @@ function toggleAnnouncement(show) {
 function toggleAcceptanceRate(show) {
     var acceptanceRates = document.querySelectorAll('.reactable-data > tr > td:nth-child(5)'),
         rates = document.getElementsByClassName('css-jkjiwi'),
-        newAcceptanceRates = document.querySelectorAll('.text-sd-muted-foreground[data-state="closed"]');
+        newAcceptanceRates = document.querySelectorAll('.text-sd-muted-foreground[data-state="closed"]'),
+        favoritesAcceptanceRates = Array.from(document.querySelectorAll('div.text-sd-muted-foreground.flex')).filter(el => el.className.includes('w-[70px]'));
 
     if (show) {
         for (var i = 0; i < acceptanceRates.length; ++i) {
@@ -528,6 +529,10 @@ function toggleAcceptanceRate(show) {
         for (var i = 0; i < newAcceptanceRates.length; ++i) {
             newAcceptanceRates[i].style = '';
         }
+
+        for (var i = 0; i < favoritesAcceptanceRates.length; ++i) {
+            favoritesAcceptanceRates[i].style = '';
+        }
     } else {
         for (var i = 0; i < acceptanceRates.length; ++i) {
             acceptanceRates[i].style = 'opacity: 0;';
@@ -542,13 +547,18 @@ function toggleAcceptanceRate(show) {
         for (var i = 0; i < newAcceptanceRates.length; ++i) {
             newAcceptanceRates[i].style = 'opacity: 0;';
         }
+
+        for (var i = 0; i < favoritesAcceptanceRates.length; ++i) {
+            favoritesAcceptanceRates[i].style = 'opacity: 0;';
+        }
     }
 };
 
 function toggleDifficulty(show) {
     var difficulties = document.querySelectorAll('.reactable-data > tr > td:nth-child(6)'),
         difficulty = document.querySelector('[diff]'),
-        newDifficulties = document.querySelectorAll('p.text-sd-easy, p.text-sd-medium, p.text-sd-hard');
+        newDifficulties = document.querySelectorAll('p.text-sd-easy, p.text-sd-medium, p.text-sd-hard'),
+        favoritesDifficulties = Array.from(document.querySelectorAll('p[class*="text-sd-easy"], p[class*="text-sd-medium"], p[class*="text-sd-hard"]')).filter(el => el.className.includes('lc-xl:mx-4'));
 
     if (show) {
         for (var i = 0; i < difficulties.length; ++i) {
@@ -562,6 +572,10 @@ function toggleDifficulty(show) {
         for (var i = 0; i < newDifficulties.length; ++i) {
             newDifficulties[i].style = '';
         }
+
+        for (var i = 0; i < favoritesDifficulties.length; ++i) {
+            favoritesDifficulties[i].style = '';
+        }
     } else {
         for (var i = 0; i < difficulties.length; ++i) {
             difficulties[i].style = 'opacity: 0;';
@@ -573,6 +587,10 @@ function toggleDifficulty(show) {
 
         for (var i = 0; i < newDifficulties.length; ++i) {
             newDifficulties[i].style = 'display: none;';
+        }
+
+        for (var i = 0; i < favoritesDifficulties.length; ++i) {
+            favoritesDifficulties[i].style = 'display: none;';
         }
     }
 };
