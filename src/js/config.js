@@ -64,12 +64,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 // resultCount: 0,
                 // solvedDifficultyCounts: false
             };
-            chrome.storage.sync.set({ lc_buddy_config: opts });
+            chrome.storage.sync.set({ lc_buddy_config: opts }, () => {
+                // Update UI after storage is set
+                updateUI(opts);
+            });
+        } else {
+            // Update UI with existing options
+            updateUI(opts);
         }
+    });
 
-        serverCompletionStatus.checked = opts.serverCompletionStatus;
-        acceptanceRate.checked = opts.acceptanceRate;
-        difficulty.checked = opts.difficulty;
+    function updateUI(opts) {
+        // Ensure we have default values for all options
+        var safeOpts = {
+            serverCompletionStatus: opts.serverCompletionStatus !== undefined ? opts.serverCompletionStatus : false,
+            acceptanceRate: opts.acceptanceRate !== undefined ? opts.acceptanceRate : true,
+            difficulty: opts.difficulty !== undefined ? opts.difficulty : true
+        };
+
+        serverCompletionStatus.checked = safeOpts.serverCompletionStatus;
+        acceptanceRate.checked = safeOpts.acceptanceRate;
+        difficulty.checked = safeOpts.difficulty;
         // DISABLED FEATURES - checkbox assignments commented out
         // notesPanel.checked = opts.notesPanel;
         // notesPanelWidth.value = opts.notesPanelWidth;
@@ -79,8 +94,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // solvedDifficultyCounts.checked = opts.solvedDifficultyCounts;
 
         // toggleNotesWidth(opts.notesPanel, opts.notesPanelWidth);
-        toggleDetailSpans(opts);
-    });
+        toggleDetailSpans(safeOpts);
+    }
 
     configControlPanel.addEventListener('input', (event) => {
         chrome.storage.sync.get('lc_buddy_config', (prevOptions) => {

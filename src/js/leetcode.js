@@ -964,9 +964,22 @@ document.addEventListener('DOMContentLoaded', function(e) {
 
     chrome.storage.sync.get('lc_buddy_config', (opts) => {
         if (opts['lc_buddy_config'] === undefined) {
+            var defaultConfig = {
+                serverCompletionStatus: false,
+                acceptanceRate: true,
+                difficulty: true,
+                notesPanel: false,
+                notesPanelWidth: 30,
+                announcement: false,
+                lockedQuestions: false,
+                resultCountNode: false,
+                resultCount: 0,
+                solvedDifficultyCounts: false
+            };
             chrome.storage.sync.set({
-                lc_buddy_config: opts
+                lc_buddy_config: defaultConfig
             });
+            updateOptions(defaultConfig);
         } else {
             updateOptions(opts['lc_buddy_config']);
         }
